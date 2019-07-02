@@ -1,9 +1,0 @@
-mz_tolerance_unit = 1, 2
-mz_tolerance_value = 10, 10
-output_name = test
-pct_full_alignment = 30
-rescue = 1
-rt_tolerance_unit = 1, 2
-rt_tolerance_value = 10, 10
-sd_width = 5
-tol_initial = 20
