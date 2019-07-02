@@ -1,0 +1,108 @@
+##############################
+## Parameter file for JUMPm ##
+## version 1.8.1.1          ##
+##############################
+
+####################################
+## Parameters for data properties ##
+####################################
+output_name = test	   # Used for unlabeled data analysis. Prefix "align_" will be automatically added
+labeled_data = 0       # 1 = labeled data; 0 = unlabeled data
+library_search = 0     # 1 = library search; only enable for unlabeled data; 0 = disable
+mode = -1               # 1 = positive mode; -1 = negative mode
+labeled_ID_method = 2  # 1 = mass only;
+                       # 2 = MISSILE combined with #C and #N;
+                       # 3 = MISSILE combined with #C;
+                       # 4 = MISSILE combined with N# 
+adduct = 1             # 0 = disable adduct detection; 1 = enable
+
+#######################################
+## Parameters for processing spectra ##
+#######################################
+data_acquisition_mode = 2       # 1 = centroid, 2 = profile for full scan and centroid for MS/MS scan 
+first_scan_extraction = 1       # the first scan used for search			 
+last_scan_extraction = 100      # the last scan used for search
+isolation_window = 1            # isolation window size 1= +/-0.5
+mass_correction = 0             # 0 = no correction, 1 = MS1-based
+decharge_ppm = 10               # intrascan isotopic tolerance for decharging
+deisotope_ppm = 10              # intrascan isotopic tolerance for decharging
+
+###########################################################
+## Parameters for feature detection (for advanced users) ##
+###########################################################
+signal_noise_ratio = 10          # fold of the minimum signal noise ratio
+max_percentage_RT_range = 100    # threshold maximum percentage of the range of retention time of a peak
+min_peak_intensity = 10000       # threshold of a peak intensity
+skipping_scans = 10              # number of skipping scans during 3D formation 
+mass_tolerance_peak_matching = 3 # mass tolerance for peak matching during 3D formation
+
+###########################################################
+## Parameters for feature alignment (for advanced users) ##
+###########################################################
+tol_initial = 20         # initial m/z-tolerance for the global calibration (default = 20 ppm)
+sd_width = 5             # SD-width for RT- and m/z-tolerances 
+                         # (when finding "matched/aligned" features, default = 5)
+rescue = 1               # 1 = rescue unaligned features by loosening RT- and m/z-tolerances; 0 = no
+## RT- and m/z-tolerance settings in rescueing step (possibly multiple times)
+rt_tolerance_unit = 1, 2	# 1 = SD-width of dynamic RT-shifts, 2 = seconds
+rt_tolerance_value = 10, 10	# RT-tolerance value(s) according to the above unit(s)
+mz_tolerance_unit = 1, 2	# 1 = SD-width of dynamic m/z-shifts, 2 = ppm
+mz_tolerance_value = 10, 10	# m/z-tolerance value(s) according to the above unit(s)
+pct_full_alignment = 100            # percentage of samples are grouped into a feature
+
+#############################################################################
+## Parameters for processing MS2 spectra for features (for advanced users) ##
+#############################################################################
+tol_precursor = 10                 # PPM tolerance for finding a MS1 peak corresponding to a feature
+tol_intra_ms2_consolidation = 10   # PPM tolerance for merging MS2 spectra within a run
+tol_inter_ms2_consolidation = 20   # PPM tolerance for merging MS2 spectra between runs
+
+####################################
+## Parameters for database search ##
+####################################
+database = HMDB,YMDB   # database type: PUBCHEM, YMDB, HMDB; 
+                       # use "," to combine two databases if you want to search a combined database
+mass_formula_database = /home/xwang4/JUMPm_database/MASS_FORMULA_DB      # mass formula database   
+structure_database = /home/xwang4/JUMPm_database/STRUCTURE_DB            # structure database
+
+#########################################
+## Parameters for matching MS2 spectra ##
+#########################################
+fragment_method = 1              # 1 = metfrag; 2 = CFM-ID 
+percentage_ms2_peaks = 50        # in percentage (50 = 50%); number of MS2 peaks used for matching 
+frag_mass_tolerance = 0.01       # mass tolerance for MS2 ion matching
+frag_mass_tolerance_unit = 1     # 1 = Da; 2 = PPM;
+matched_scan_dist = 500          # scan number between MS2 and MS1 containing MS2 precursor
+                                 # matched MISSILE pairs
+
+############################################
+## Parameters for processing labeled data ##
+############################################
+c12_c13_tolerance = 4                    # tolerance between C12 and C15; unit in Da 
+c12_n15_tolerance = 4                    # tolerance between C12 and C15; unit in Da 
+tolerance_unit = 2                       # 1 = Da; 2 = ppm
+relative_isotopes_intensity = 0.1        # minimal relative intensity between paired isotopes
+min_pair_correlation = 0.5               # minimal pairing correlation coefficient
+cluster_tolerance = 4                    # from version 0.1.5, ppm is changed to cluster_tolerance
+loading_normalization = 0
+formula_mass_tolerance_searching = 10    # mass tolerance between mono mass (C12) and formula
+                                         # for searching formula (ppm)
+formula_mass_tolerance_pairing = 10      # use it for the first round of search 
+                                         # to estimate label mixing ratio
+
+###################################
+## Parameters for cluster system ##
+###################################
+cluster = 1                      # 1 = cluster; 0 = single server
+job_management_system = SGE      # other systems (e.g. LSF & PBS) may be used
+processor_number = 10            # processor number when cluster = 0
+
+## falsified peak mass
+mass_shift = 0                   # Unit: ppm
+
+##########################################################################################
+#adduct_Cl = 34.96885271
+adduct_CH2O2 = 46.00547931
+#adduct_C2H4O2 = 60.02112937
+#adduct_C2HF3O2 = 113.9928639
+

@@ -1,0 +1,330 @@
+
+
+  Feature calibration
+  ===================
+
+  IROA_IS_NEG_2.feature is chosen as the reference run
+
+
+  Feature calibration
+  ===================
+
+  IROA_IS_NEG_2.feature is chosen as the reference run
+
+  IROA_IS_NEG_1.feature is being aligned against the reference run (it may take a while)
+  Global calibration of RT and m/z is being performed
+    Based on the matched features within +/- 20 ppm
+    The global RT-shift is 1.5000 second
+    The global m/z-shift is -0.1287 ppm
+    RT and m/z of the compared sample is calibrated according to the global RT- and m/z-shift
+  Local calibration of RT and m/z is being performed (through LOESS modeling)
+    RT- and m/z-tolerances will be dynamically estimated over RT- and m/z-range as follows
+      RT- and m/z-tolerance = 5 x dynamically estimated SD of RT- and m/z-shifts
+    LOESS modeling may take some time. Please be patient ...
+    The 1st round of RT-calibration is done
+      min SD of RT-shifts = 0 second
+      max SD of RT-shifts = 8.7231 second
+    The 2nd round of RT-calibration is done
+      min SD of RT-shifts = 0 second
+      max SD of RT-shifts = 8.5952 second
+    The 1st round of m/z-calibration is done
+      min SD of m/z-shifts = 0.2725 ppm
+      min SD of m/z-shifts = 0.6232 ppm
+    The 2nd round of m/z-calibration is done
+      min SD of m/z-shifts = 0.2445 ppm
+      min SD of m/z-shifts = 0.8102 ppm
+
+  Calibration summary
+    After calibration, RT- and m/z-shifts of each run (against a reference run) are centered to zero
+    Variations (i.e. standard deviation) of RT- and m/z-shifts are as follows
+    Filename		# features	SD RT-shift[second]	SD m/z-shift[ppm]
+    IROA_IS_NEG		3513		3.596511	0.452565
+    IROA_IS_NEG		3833		NA (reference)	NA (reference)
+
+  Feature alignment
+  =================
+
+  IROA_IS_NEG_2.feature:3833 features (reference run)
+  IROA_IS_NEG_1.feature:3513 features (compared run)
+    2372 features are aligned between runs
+    There are 1141 unaligned features
+    The features satisfying the following conditions are going to be reviewed for further alignment
+    - Intensity higher than 170571.5 (median intensity of aligned features)
+    - Ratio of intensities within 95% of ratios from aligned features
+    - RT-shifts within 10 x SD of estimated RT-shifts from aligned features
+    - m/z-shifts within 10 x SD of estimated m/z-shifts from aligned features
+    Through the rescue procedure, 57 features are additionally aligned
+
+    There are 1084 unaligned features
+    The features satisfying the following conditions are going to be reviewed for further alignment
+    - Intensity higher than 176406.5 (median intensity of aligned features)
+    - Ratio of intensities within 95% of ratios from aligned features
+    - RT-shifts less than 10 seconds
+    - m/z-shifts less than 10 ppm
+    Through the rescue procedure, 4 features are additionally aligned
+
+  Alignment/matching summary
+    After alignment/feature matching, fully-, partially- and un-aligned features are as follows
+    Filename		Fully-aligned	Partially-aligned	un-aligned
+    IROA_IS_NEG		2433		0		1400
+    IROA_IS_NEG		2433		0		1400
+
+    There are 0 partially-aligned features
+    Partially-aligned features over 1 runs = 0
+    Partially-aligned features over 2 runs = 0
+
+    According to the parameter setting, no feature is added to the set of fully-aligned ones
+
+  Quantity information
+  ====================
+  Loading-bias summary
+    Samplename	Mean[%]	SD[%]	SEM[%]	#features
+    IROA_IS_NEG 	 87.28 	 19.85 	 0.45 	 1945 
+    IROA_IS_NEG.1 	 109.99 	 14.15 	 0.32 	 1945 
+
+
+  Feature calibration
+  ===================
+
+  IROA_IS_NEG_2.feature is chosen as the reference run
+
+  IROA_IS_NEG_1.feature is being aligned against the reference run (it may take a while)
+  Global calibration of RT and m/z is being performed
+    Based on the matched features within +/- 20 ppm
+    The global RT-shift is 1.5000 second
+    The global m/z-shift is -0.1287 ppm
+    RT and m/z of the compared sample is calibrated according to the global RT- and m/z-shift
+  Local calibration of RT and m/z is being performed (through LOESS modeling)
+    RT- and m/z-tolerances will be dynamically estimated over RT- and m/z-range as follows
+      RT- and m/z-tolerance = 5 x dynamically estimated SD of RT- and m/z-shifts
+    LOESS modeling may take some time. Please be patient ...
+    The 1st round of RT-calibration is done
+      min SD of RT-shifts = 0 second
+      max SD of RT-shifts = 8.7231 second
+    The 2nd round of RT-calibration is done
+      min SD of RT-shifts = 0 second
+      max SD of RT-shifts = 8.5952 second
+    The 1st round of m/z-calibration is done
+      min SD of m/z-shifts = 0.2725 ppm
+      min SD of m/z-shifts = 0.6232 ppm
+    The 2nd round of m/z-calibration is done
+      min SD of m/z-shifts = 0.2445 ppm
+      min SD of m/z-shifts = 0.8102 ppm
+
+  Calibration summary
+    After calibration, RT- and m/z-shifts of each run (against a reference run) are centered to zero
+    Variations (i.e. standard deviation) of RT- and m/z-shifts are as follows
+    Filename		# features	SD RT-shift[second]	SD m/z-shift[ppm]
+    IROA_IS_NEG		3513		3.596511	0.452565
+    IROA_IS_NEG		3833		NA (reference)	NA (reference)
+
+  Feature alignment
+  =================
+
+  IROA_IS_NEG_2.feature:3833 features (reference run)
+  IROA_IS_NEG_1.feature:3513 features (compared run)
+    2372 features are aligned between runs
+    There are 1141 unaligned features
+    The features satisfying the following conditions are going to be reviewed for further alignment
+    - Intensity higher than 170571.5 (median intensity of aligned features)
+    - Ratio of intensities within 95% of ratios from aligned features
+    - RT-shifts within 10 x SD of estimated RT-shifts from aligned features
+    - m/z-shifts within 10 x SD of estimated m/z-shifts from aligned features
+    Through the rescue procedure, 57 features are additionally aligned
+
+    There are 1084 unaligned features
+    The features satisfying the following conditions are going to be reviewed for further alignment
+    - Intensity higher than 176406.5 (median intensity of aligned features)
+    - Ratio of intensities within 95% of ratios from aligned features
+    - RT-shifts less than 10 seconds
+    - m/z-shifts less than 10 ppm
+    Through the rescue procedure, 4 features are additionally aligned
+
+
+
+  Feature calibration
+  ===================
+
+  IROA_IS_NEG_2.feature is chosen as the reference run
+
+  IROA_IS_NEG_1.feature is being aligned against the reference run (it may take a while)
+  Global calibration of RT and m/z is being performed
+    Based on the matched features within +/- 20 ppm
+    The global RT-shift is 1.5000 second
+    The global m/z-shift is -0.1287 ppm
+    RT and m/z of the compared sample is calibrated according to the global RT- and m/z-shift
+  Local calibration of RT and m/z is being performed (through LOESS modeling)
+    RT- and m/z-tolerances will be dynamically estimated over RT- and m/z-range as follows
+      RT- and m/z-tolerance = 5 x dynamically estimated SD of RT- and m/z-shifts
+    LOESS modeling may take some time. Please be patient ...
+    The 1st round of RT-calibration is done
+      min SD of RT-shifts = 0 second
+      max SD of RT-shifts = 8.7231 second
+    The 2nd round of RT-calibration is done
+      min SD of RT-shifts = 0 second
+      max SD of RT-shifts = 8.5952 second
+    The 1st round of m/z-calibration is done
+      min SD of m/z-shifts = 0.2725 ppm
+      min SD of m/z-shifts = 0.6232 ppm
+    The 2nd round of m/z-calibration is done
+      min SD of m/z-shifts = 0.2445 ppm
+      min SD of m/z-shifts = 0.8102 ppm
+
+  Calibration summary
+    After calibration, RT- and m/z-shifts of each run (against a reference run) are centered to zero
+    Variations (i.e. standard deviation) of RT- and m/z-shifts are as follows
+    Filename		# features	SD RT-shift[second]	SD m/z-shift[ppm]
+
+
+  Feature calibration
+  ===================
+
+  IROA_IS_NEG_2.feature is chosen as the reference run
+
+  IROA_IS_NEG_1.feature is being aligned against the reference run (it may take a while)
+  Global calibration of RT and m/z is being performed
+    Based on the matched features within +/- 20 ppm
+    The global RT-shift is 1.5000 second
+    The global m/z-shift is -0.1287 ppm
+    RT and m/z of the compared sample is calibrated according to the global RT- and m/z-shift
+  Local calibration of RT and m/z is being performed (through LOESS modeling)
+    RT- and m/z-tolerances will be dynamically estimated over RT- and m/z-range as follows
+      RT- and m/z-tolerance = 5 x dynamically estimated SD of RT- and m/z-shifts
+    LOESS modeling may take some time. Please be patient ...
+    The 1st round of RT-calibration is done
+      min SD of RT-shifts = 0 second
+      max SD of RT-shifts = 8.7231 second
+    The 2nd round of RT-calibration is done
+      min SD of RT-shifts = 0 second
+      max SD of RT-shifts = 8.5952 second
+    The 1st round of m/z-calibration is done
+      min SD of m/z-shifts = 0.2725 ppm
+      min SD of m/z-shifts = 0.6232 ppm
+    The 2nd round of m/z-calibration is done
+      min SD of m/z-shifts = 0.2445 ppm
+      min SD of m/z-shifts = 0.8102 ppm
+
+  Calibration summary
+    After calibration, RT- and m/z-shifts of each run (against a reference run) are centered to zero
+    Variations (i.e. standard deviation) of RT- and m/z-shifts are as follows
+    Filename		# features	SD RT-shift[second]	SD m/z-shift[ppm]
+    IROA_IS_NEG		3513		3.596511	0.452565
+    IROA_IS_NEG		3833		NA (reference)	NA (reference)
+
+  Feature alignment
+  =================
+
+  IROA_IS_NEG_2.feature:3833 features (reference run)
+  IROA_IS_NEG_1.feature:3513 features (compared run)
+    2372 features are aligned between runs
+    There are 1141 unaligned features
+    The features satisfying the following conditions are going to be reviewed for further alignment
+    - Intensity higher than 170571.5 (median intensity of aligned features)
+    - Ratio of intensities within 95% of ratios from aligned features
+    - RT-shifts within 10 x SD of estimated RT-shifts from aligned features
+    - m/z-shifts within 10 x SD of estimated m/z-shifts from aligned features
+    Through the rescue procedure, 57 features are additionally aligned
+
+    There are 1084 unaligned features
+    The features satisfying the following conditions are going to be reviewed for further alignment
+    - Intensity higher than 176406.5 (median intensity of aligned features)
+    - Ratio of intensities within 95% of ratios from aligned features
+    - RT-shifts less than 10 seconds
+    - m/z-shifts less than 10 ppm
+    Through the rescue procedure, 4 features are additionally aligned
+
+  Alignment/matching summary
+    After alignment/feature matching, fully-, partially- and un-aligned features are as follows
+    Filename		Fully-aligned	Partially-aligned	un-aligned
+    IROA_IS_NEG		2433		0		1400
+    IROA_IS_NEG		2433		0		1400
+
+    There are 0 partially-aligned features
+    Partially-aligned features over 1 runs = 0
+    Partially-aligned features over 2 runs = 0
+
+    According to the parameter setting, no feature is added to the set of fully-aligned ones
+
+  Quantity information
+  ====================
+  Loading-bias summary
+    Samplename	Mean[%]	SD[%]	SEM[%]	#features
+    IROA_IS_NEG 	 87.28 	 19.85 	 0.45 	 1945 
+    IROA_IS_NEG.1 	 109.99 	 14.15 	 0.32 	 1945 
+
+
+  Feature calibration
+  ===================
+
+  IROA_IS_NEG_2.1.feature is chosen as the reference run
+
+  IROA_IS_NEG_1.1.feature is being aligned against the reference run (it may take a while)
+  Global calibration of RT and m/z is being performed
+    Based on the matched features within +/- 20 ppm
+    The global RT-shift is 1.5000 second
+    The global m/z-shift is -0.1287 ppm
+    RT and m/z of the compared sample is calibrated according to the global RT- and m/z-shift
+  Local calibration of RT and m/z is being performed (through LOESS modeling)
+    RT- and m/z-tolerances will be dynamically estimated over RT- and m/z-range as follows
+      RT- and m/z-tolerance = 5 x dynamically estimated SD of RT- and m/z-shifts
+    LOESS modeling may take some time. Please be patient ...
+    The 1st round of RT-calibration is done
+      min SD of RT-shifts = 0 second
+      max SD of RT-shifts = 8.7231 second
+    The 2nd round of RT-calibration is done
+      min SD of RT-shifts = 0 second
+      max SD of RT-shifts = 8.5952 second
+    The 1st round of m/z-calibration is done
+      min SD of m/z-shifts = 0.2725 ppm
+      min SD of m/z-shifts = 0.6232 ppm
+    The 2nd round of m/z-calibration is done
+      min SD of m/z-shifts = 0.2445 ppm
+      min SD of m/z-shifts = 0.8102 ppm
+
+  Calibration summary
+    After calibration, RT- and m/z-shifts of each run (against a reference run) are centered to zero
+    Variations (i.e. standard deviation) of RT- and m/z-shifts are as follows
+    Filename		# features	SD RT-shift[second]	SD m/z-shift[ppm]
+    IROA_IS_NEG_1		3513		3.596511	0.452565
+    IROA_IS_NEG_2		3833		NA (reference)	NA (reference)
+
+  Feature alignment
+  =================
+
+  IROA_IS_NEG_2.1.feature:3833 features (reference run)
+  IROA_IS_NEG_1.1.feature:3513 features (compared run)
+    2372 features are aligned between runs
+    There are 1141 unaligned features
+    The features satisfying the following conditions are going to be reviewed for further alignment
+    - Intensity higher than 170571.5 (median intensity of aligned features)
+    - Ratio of intensities within 95% of ratios from aligned features
+    - RT-shifts within 10 x SD of estimated RT-shifts from aligned features
+    - m/z-shifts within 10 x SD of estimated m/z-shifts from aligned features
+    Through the rescue procedure, 57 features are additionally aligned
+
+    There are 1084 unaligned features
+    The features satisfying the following conditions are going to be reviewed for further alignment
+    - Intensity higher than 176406.5 (median intensity of aligned features)
+    - Ratio of intensities within 95% of ratios from aligned features
+    - RT-shifts less than 10 seconds
+    - m/z-shifts less than 10 ppm
+    Through the rescue procedure, 4 features are additionally aligned
+
+  Alignment/matching summary
+    After alignment/feature matching, fully-, partially- and un-aligned features are as follows
+    Filename		Fully-aligned	Partially-aligned	un-aligned
+    IROA_IS_NEG_1		2433		0		1080
+    IROA_IS_NEG_2		2433		0		1400
+
+    There are 0 partially-aligned features
+    Partially-aligned features over 1 runs = 0
+    Partially-aligned features over 2 runs = 0
+
+    According to the parameter setting, no feature is added to the set of fully-aligned ones
+
+  Quantity information
+  ====================
+  Loading-bias summary
+    Samplename	Mean[%]	SD[%]	SEM[%]	#features
+    IROA_IS_NEG_1 	 87.28 	 19.85 	 0.45 	 1945 
+    IROA_IS_NEG_2 	 109.99 	 14.15 	 0.32 	 1945 
