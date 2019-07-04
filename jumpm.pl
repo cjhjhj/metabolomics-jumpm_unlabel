@@ -8,6 +8,7 @@ use Spiders::Params;
 use Spiders::ProcessingRAW;
 use Spiders::ProcessingMzXML;
 use Spiders::SGEQueue;
+use Spiders::LSFQueue;
 use Spiders::Path;
 use Getopt::Long;
 use Cwd;
