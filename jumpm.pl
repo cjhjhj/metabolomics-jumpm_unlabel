@@ -141,7 +141,7 @@ foreach $arg (sort @ARGV) {
 		$nJobs++;
 		$mzXML = abs_path($mzXML);
 		$dataDir = abs_path($dataDir);
-		my $jobName = "feat_${randNum}_$nJobs";		
+		my $jobName = "feat_m_$nJobs";		
 		my $command = "perl $Bin/featureDetection.pl $paramFile $mzXML $subDir";
 		my $job = $queue -> submit_job($dataDir, $jobName, $command);
 		$jobIDs{$job} = 1;
@@ -246,7 +246,7 @@ $randNum = int(rand(100));
 %jobIDs = {};
 for (my $i = 0; $i < $nTotalJobs; $i++) {
 	$nJobs++;
-	my $jobName = "sch_${randNum}_$nJobs";
+	my $jobName = "sch_m_$nJobs";
 	my $command = "";
 	for (my $j = 0; $j < $filesPerJob; $j++) {
 		my $k = $filesPerJob * $i + $j;
@@ -269,7 +269,7 @@ $randNum = int(rand(100));
 %jobIDs = {};
 for (my $i = 0; $i < $nTotalJobs; $i++) {
 	$nJobs++;
-	my $jobName = "score_${randNum}_$nJobs";
+	my $jobName = "score_m_$nJobs";
 	my $command = "";
 	for (my $j = 0; $j < $filesPerJob; $j++) {
 		my $k = $filesPerJob * $i + $j;
