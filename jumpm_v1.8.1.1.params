@@ -7,13 +7,8 @@
 ## Parameters for data properties ##
 ####################################
 output_name = test	   # Used for unlabeled data analysis. Prefix "align_" will be automatically added
-labeled_data = 0       # 1 = labeled data; 0 = unlabeled data
 library_search = 0     # 1 = library search; only enable for unlabeled data; 0 = disable
 mode = -1               # 1 = positive mode; -1 = negative mode
-labeled_ID_method = 2  # 1 = mass only;
-                       # 2 = MISSILE combined with #C and #N;
-                       # 3 = MISSILE combined with #C;
-                       # 4 = MISSILE combined with N# 
 adduct = 1             # 0 = disable adduct detection; 1 = enable
 
 #######################################
@@ -78,16 +73,16 @@ matched_scan_dist = 500          # scan number between MS2 and MS1 containing MS
 ############################################
 ## Parameters for processing labeled data ##
 ############################################
-c12_c13_tolerance = 4                    # tolerance between C12 and C15; unit in Da 
-c12_n15_tolerance = 4                    # tolerance between C12 and C15; unit in Da 
-tolerance_unit = 2                       # 1 = Da; 2 = ppm
-relative_isotopes_intensity = 0.1        # minimal relative intensity between paired isotopes
-min_pair_correlation = 0.5               # minimal pairing correlation coefficient
-cluster_tolerance = 4                    # from version 0.1.5, ppm is changed to cluster_tolerance
-loading_normalization = 0
-formula_mass_tolerance_searching = 10    # mass tolerance between mono mass (C12) and formula
+#c12_c13_tolerance = 4                    # tolerance between C12 and C15; unit in Da 
+#c12_n15_tolerance = 4                    # tolerance between C12 and C15; unit in Da 
+#tolerance_unit = 2                       # 1 = Da; 2 = ppm
+#relative_isotopes_intensity = 0.1        # minimal relative intensity between paired isotopes
+#min_pair_correlation = 0.5               # minimal pairing correlation coefficient
+#cluster_tolerance = 4                    # from version 0.1.5, ppm is changed to cluster_tolerance
+#loading_normalization = 0
+#formula_mass_tolerance_searching = 10    # mass tolerance between mono mass (C12) and formula
                                          # for searching formula (ppm)
-formula_mass_tolerance_pairing = 10      # use it for the first round of search 
+#formula_mass_tolerance_pairing = 10      # use it for the first round of search 
                                          # to estimate label mixing ratio
 
 ###################################
@@ -95,14 +90,29 @@ formula_mass_tolerance_pairing = 10      # use it for the first round of search
 ###################################
 cluster = 1                      # 1 = cluster; 0 = single server
 job_management_system = SGE      # other systems (e.g. LSF & PBS) may be used
-processor_number = 10            # processor number when cluster = 0
 
 ## falsified peak mass
 mass_shift = 0                   # Unit: ppm
 
-##########################################################################################
-#adduct_Cl = 34.96885271
-adduct_CH2O2 = 46.00547931
-#adduct_C2H4O2 = 60.02112937
-#adduct_C2HF3O2 = 113.9928639
+###############################
+## Adducts for positive mode ##
+###############################
+#adduct_NH3 = 17.0271024
+#adduct_Na = 21.9825
+#adduct_K = 37.956438
+#adduct_CH3O = 32.026769
+#adduct_ACN = 41.0271024
+#adduct_ACNNa = 63.0090478
+#adduct_2ACN = 82.0536502
 
+###############################
+## Adducts for negative mode ##
+###############################
+adduct_Cl = 35.97612871
+adduct_HCOO = 46.0049306
+adduct_CH3COO = 60.0205798
+adduct_2H = -1.007825
+adduct_-2H+Na = 21.9813968
+adduct_-2H+K = 37.9553348
+
+#adduct_CH2O2 = 46.00547931
