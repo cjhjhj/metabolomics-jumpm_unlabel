@@ -183,7 +183,6 @@ sub searchStructures {
 	return (@structures);
 }
 
-
 sub getParams {
 	my ($file) = @_;
 	if (!-e $file) {

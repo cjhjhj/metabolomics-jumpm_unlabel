@@ -60,99 +60,120 @@ if ($$params{'cluster'} == 1 && ($$params{'cluster_type'} eq "LSF" || $$params{'
 ##################
 ## Main routine ##
 ##################
-## Preparation of directories according to the names of input files
-print "  Using the following raw files:\n";
-print $LOG "  Using the following raw files:\n";
-foreach $arg (sort @ARGV) {
-	if ($arg =~ /.[raw|RAW|mzXML]/) {
-		print "  $arg\n";
-		print $LOG "  $arg\n";
-	}
-}
 my $subDir;
 my %fileHash;
 my @fileArray;
 my @featureFileArray;
-my $nJobs = 0;
-my $randNum = int(rand(100));
-my %jobIDs;
-foreach $arg (sort @ARGV) {
-	#############################################################
-	## Handling .raw (.mzXML) files and generating directories ##
-	#############################################################
-	$arg = basename($arg);	
-	my @extensionList = (".raw", ".RAW", ".mzXML");
-	if ($arg =~ /.[raw|RAW|mzXML]/) {
-		push (@fileArray, $arg);
-		my ($fileName, $directory, $extension) = fileparse($arg, @extensionList);
-		## If $arg = /Example/unlabeled_data/12C_HILIC_Neg.mzXML, then
-		## $filename = "12C_HILIC_Neg"
-		## $directory = "/Example/unlabeled_data/"
-		## $extension = "mzXML"
-		my $dataDir = "$directory/$fileName";
-		$dataDir =~ s/\/\//\//g;	## Change any double slashes (//) to single ones (/)
-		system (qq(mkdir $dataDir >/dev/null 2>&1));
-		system (qq(mv $arg $dataDir >/dev/null 2>&1));		
-		if (!-e($dataDir)) {
-			print "  There is no such file ($arg)!\n";
-			exit;
+if ($$params{'skip_feature_detection'} == 0) {
+	## Perform feature detection using input .raw (or .mzXML) files
+	
+	## Preparation of directories according to the names of input files
+	print "  Using the following raw files:\n";
+	print $LOG "  Using the following raw files:\n";
+	foreach $arg (sort @ARGV) {
+		if ($arg =~ /.[raw|RAW|mzXML]/) {
+			print "  $arg\n";
+			print $LOG "  $arg\n";
 		}
-		my $path = new Spiders::Path($dataDir);
-		my $list = $path -> makeDirectoryList();
-		if (@$list) {
-			$subDir = $path -> chooseDirEntry($list, "  Choose a .out file directory", $subDir);
-		} else {
-			$subDir	= $fileName . ".1";
-		}
-		print "  Using: $subDir\n";
-		print $LOG "  Using: $subDir\n";		
-		$path -> addSubdir($subDir);
-		$subDir =  $path -> baseDir() . "/$subDir";	## e.g. /Example/unlabeled_data/12C_HILIC_Neg/12C_HILIC_Neg.1/		
-		my $inputFile = "$dataDir/$arg";
-		$fileHash{$inputFile} = $subDir;
-		
-		####################################################
-		## File conversion (.raw to .mzXML), if necessary ##
-		####################################################
-		if ($inputFile =~ /\.mzXML/) {
-			$inputFile =~ s/\.mzXML//g;
-		}
-		my $procRaw = new Spiders::ProcessingRAW();
-		$procRaw -> setLogFile($LOG);		
-		$procRaw -> setRawFile($inputFile);
-		my $procXml = new Spiders::ProcessingMzXML();	
-		$procXml -> setDtaPath($subDir);
-		$procXml -> setLogFile($LOG);		
-		print "  Handling input file(s)\n";
-		print $LOG "  Handling input file(s)\n";
-		my $mzXML;
-		if ($$params{'data_acquisition_mode'} == 1) {	## Centroid mode
-			$mzXML = $procRaw -> raw2mzXML("centroid");
-		} elsif ($$params{'data_acquisition_mode'} == 2) {
-			$mzXML = $procRaw -> raw2mzXML("profile");
-		} else {
-			system (qq(cp $tmpLog $subDir/JUMPm.log));		
-			print "Please set the proper 'data_acquisition_mode' parameter\n";
-			exit;			
-		}
-		
-		#######################
-		## Feature detection ##
-		#######################
-		$nJobs++;
-		$mzXML = abs_path($mzXML);
-		$dataDir = abs_path($dataDir);
-		my $jobName = "feat_m_$nJobs";		
-		my $command = "perl $Bin/featureDetection.pl $paramFile $mzXML $subDir";
-		my $job = $queue -> submit_job($dataDir, $jobName, $command);
-		$jobIDs{$job} = 1;
-		print "\r  $nJobs database search jobs are submitted";
-		my $featureFile = $subDir . "\.feature";
-		push (@featureFileArray, $featureFile);
 	}
+	my $nJobs = 0;
+	my $randNum = int(rand(100));
+	my %jobIDs;
+	foreach $arg (sort @ARGV) {
+		#############################################################
+		## Handling .raw (.mzXML) files and generating directories ##
+		#############################################################
+		$arg = basename($arg);	
+		my @extensionList = (".raw", ".RAW", ".mzXML");
+		if ($arg =~ /.[raw|RAW|mzXML]/) {
+			push (@fileArray, $arg);
+			my ($fileName, $directory, $extension) = fileparse($arg, @extensionList);
+			## If $arg = /Example/unlabeled_data/12C_HILIC_Neg.mzXML, then
+			## $filename = "12C_HILIC_Neg"
+			## $directory = "/Example/unlabeled_data/"
+			## $extension = "mzXML"
+			my $dataDir = "$directory/$fileName";
+			$dataDir =~ s/\/\//\//g;	## Change any double slashes (//) to single ones (/)
+			system (qq(mkdir $dataDir >/dev/null 2>&1));
+			system (qq(mv $arg $dataDir >/dev/null 2>&1));		
+			if (!-e($dataDir)) {
+				print "  There is no such file ($arg)!\n";
+				exit;
+			}
+			my $path = new Spiders::Path($dataDir);
+			my $list = $path -> makeDirectoryList();
+			if (@$list) {
+				$subDir = $path -> chooseDirEntry($list, "  Choose a .out file directory", $subDir);
+			} else {
+				$subDir	= $fileName . ".1";
+			}
+			print "  Using: $subDir\n";
+			print $LOG "  Using: $subDir\n";		
+			$path -> addSubdir($subDir);
+			$subDir =  $path -> baseDir() . "/$subDir";	## e.g. /Example/unlabeled_data/12C_HILIC_Neg/12C_HILIC_Neg.1/		
+			my $inputFile = "$dataDir/$arg";
+			$fileHash{$inputFile} = $subDir;
+			
+			####################################################
+			## File conversion (.raw to .mzXML), if necessary ##
+			####################################################
+			if ($inputFile =~ /\.mzXML/) {
+				$inputFile =~ s/\.mzXML//g;
+			}
+			my $procRaw = new Spiders::ProcessingRAW();
+			$procRaw -> setLogFile($LOG);		
+			$procRaw -> setRawFile($inputFile);
+			my $procXml = new Spiders::ProcessingMzXML();	
+			$procXml -> setDtaPath($subDir);
+			$procXml -> setLogFile($LOG);		
+			print "  Handling input file(s)\n";
+			print $LOG "  Handling input file(s)\n";
+			my $mzXML;
+			if ($$params{'data_acquisition_mode'} == 1) {	## Centroid mode
+				$mzXML = $procRaw -> raw2mzXML("centroid");
+			} elsif ($$params{'data_acquisition_mode'} == 2) {
+				$mzXML = $procRaw -> raw2mzXML("profile");
+			} else {
+				system (qq(cp $tmpLog $subDir/JUMPm.log));		
+				print "Please set the proper 'data_acquisition_mode' parameter\n";
+				exit;			
+			}
+			
+			#######################
+			## Feature detection ##
+			#######################
+			$nJobs++;
+			$mzXML = abs_path($mzXML);
+			$dataDir = abs_path($dataDir);
+			my $jobName = "feat_m_$nJobs";		
+			my $command = "perl $Bin/featureDetection.pl $paramFile $mzXML $subDir";
+			my $job = $queue -> submit_job($dataDir, $jobName, $command);
+			$jobIDs{$job} = 1;
+			print "\r  $nJobs database search jobs are submitted";
+			my $featureFile = $subDir . "\.feature";
+			push (@featureFileArray, $featureFile);
+		}
+	}
+	print "\n  You submitted $nJobs jobs for database search\n";
+	checkJobStatus($nJobs, \%jobIDs, $queue);	
+} elsif ($$params{'skip_feature_detection'} == 1) {
+	## Skip feature detection
+	@featureFileArray = @{$$params{'feature_files'}};
+	foreach my $featureFile (@featureFileArray) {
+		my $key = $featureFile;
+		my $value = $featureFile;
+		$key =~ s/\d+\.feature/mzXML/;
+		$value =~ s/\.feature//;
+		$fileHash{$key} = $value;
+		push (@fileArray, basename($key));
+	}
+	$subDir = $featureFileArray[0];
+	$subDir =~ s/\.feature$//;
+} else {
+	print "'skip_feature_detection' parameter should be set properly\n";
+	print "Please check the parameter and try again\n";
+	exit;
 }
-print "\n  You submitted $nJobs jobs for database search\n";
-checkJobStatus($nJobs, \%jobIDs, $queue);
 
 #######################
 ## Feature alignment ##

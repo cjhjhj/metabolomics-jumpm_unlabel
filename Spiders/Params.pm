@@ -90,7 +90,7 @@ sub parseParams {
 	my $path = $self -> {PATH};
 	if (open (P, "<", "$path")) {
 		my $line;
-		my $phash = {};    
+		my $hash = {};    
 		while ($line = <P>) {
 			my $linehash = {};
 			my $comments = "";      
@@ -101,12 +101,19 @@ sub parseParams {
 			if ($line =~ /^(.+?)\s*=\s*(.+)$/) {
 				my ($key, $data) = ($1, $2);
 				$data =~ s/\s+$//o;
-				$phash -> {$key} = $data;
-			}      
-		}     
+				if ($key eq "feature_files") {
+					push (@{$hash -> {$key}}, $data);
+				} else {
+					$hash -> {$key} = $data;
+				}
+			} elsif ($line !~ /=/ && $line !~ /\#/ && $line =~ /\.feature/ && defined($hash -> {'feature_files'})) {
+				chomp ($line);
+				push (@{$hash -> {'feature_files'}}, $line);
+			}
+		}
 		close P;
-		$self -> {PARAMETERS} = $phash;
-		return $phash;
+		$self -> {PARAMETERS} = $hash;
+		return $hash;
 	}
 	return 0;
 }

@@ -3,6 +3,16 @@
 ## version 1.8.1.1          ##
 ##############################
 
+###############################################
+## Whether skip the feature detection or not ##
+###############################################
+skip_feature_detection = 1      # 0 = don't skip (i.e. perform feature detection), 1 = skip
+
+## If you choose 'skip_feature_detection = 1', then specify absolute path(s) of feature file(s) separated by new line
+feature_files = /home/htan/2019/IROA_library/neg/oldalgorithm/IROA_IS_NEG_1/IROA_IS_NEG_1.1.feature
+/home/htan/2019/IROA_library/neg/oldalgorithm/IROA_IS_NEG_2/IROA_IS_NEG_2.1.feature
+/home/htan/2019/IROA_library/neg/oldalgorithm/IROA_IS_NEG_3/IROA_IS_NEG_3.1.feature
+
 ####################################
 ## Parameters for data properties ##
 ####################################
@@ -59,6 +69,8 @@ database = HMDB,YMDB   # database type: PUBCHEM, YMDB, HMDB;
                        # use "," to combine two databases if you want to search a combined database
 mass_formula_database = /home/xwang4/JUMPm_database/MASS_FORMULA_DB      # mass formula database   
 structure_database = /home/xwang4/JUMPm_database/STRUCTURE_DB            # structure database
+formula_mass_tolerance_searching = 10    # mass tolerance between mono mass and formula
+                                         # for searching formula (ppm)
 
 #########################################
 ## Parameters for matching MS2 spectra ##
@@ -69,21 +81,6 @@ frag_mass_tolerance = 0.01       # mass tolerance for MS2 ion matching
 frag_mass_tolerance_unit = 1     # 1 = Da; 2 = PPM;
 matched_scan_dist = 500          # scan number between MS2 and MS1 containing MS2 precursor
                                  # matched MISSILE pairs
-
-############################################
-## Parameters for processing labeled data ##
-############################################
-#c12_c13_tolerance = 4                    # tolerance between C12 and C15; unit in Da 
-#c12_n15_tolerance = 4                    # tolerance between C12 and C15; unit in Da 
-#tolerance_unit = 2                       # 1 = Da; 2 = ppm
-#relative_isotopes_intensity = 0.1        # minimal relative intensity between paired isotopes
-#min_pair_correlation = 0.5               # minimal pairing correlation coefficient
-#cluster_tolerance = 4                    # from version 0.1.5, ppm is changed to cluster_tolerance
-#loading_normalization = 0
-#formula_mass_tolerance_searching = 10    # mass tolerance between mono mass (C12) and formula
-                                         # for searching formula (ppm)
-#formula_mass_tolerance_pairing = 10      # use it for the first round of search 
-                                         # to estimate label mixing ratio
 
 ###################################
 ## Parameters for cluster system ##
