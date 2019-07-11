@@ -10,7 +10,7 @@ use Cwd 'abs_path';
 use Data::Dumper;
 use File::Basename;
 
-my $H = 1.007277;
+my $H = 1.007276466812;
 my ($paramFile, $ms2File) = @ARGV;
 
 ##########################################
@@ -31,21 +31,22 @@ $query -> setBin($Bin);
 open (MS2, "<", $ms2File);
 my $header = <MS2>;
 close (MS2);
-my $mz = (split(/\t/, $header))[0];
+my $MH = (split(/\t/, $header))[0];	## Either (M+H)+ or (M-H)-
 my $charge = (split(/\t/, $header))[1];
 
 ## Calculate 'neutral' monoisotopic mass to make a query
-## m/z in .MS2 (i.e. dta-format) file is singly charged (deisotoped and then protonated)
-my $monoMass = ($mz - $H) * $charge + $H;
+## Mass .MS2 (i.e. dta-format) file is (M+H)+ for positive mode or (M-H)- for negative mode, where M = neutral mass
+my $neutralMass;
+# = monoMass = ($mz - $H) * $charge + $H;
 if ($params{'mode'} == -1) {
-	$monoMass = $monoMass + $H;
+	$neutralMass = $MH + $H;
 } else {
-	$monoMass = $monoMass - $H;
+	$neutralMass = $MH - $H;
 }
 
 ## DB search for formula
 my ($allFormula, $targetFormula, $decoyFormula) = 
-$query -> queryMassWithDatabaseFilter($monoMass, 
+$query -> queryMassWithDatabaseFilter($neutralMass, 
                                       $params{'formula_mass_tolerance_searching'},
                                       $params{'mass_formula_database'},
                                       "yes", $database, $decoyDatabase);
@@ -57,7 +58,7 @@ my (@targetStructures, @decoyStructures);
 if (scalar(@$targetFormula) == 0 && scalar(@$decoyFormula) == 0 && $params{'adduct'} == 1) {
 	## Adduct-based search
 	my ($targetFormulaRef, $decoyFormulaRef, $targetStructRef, $decoyStructRef) = 
-	adductBasedSearch($query, $monoMass, \%params, $H);
+	adductBasedSearch($query, $neutralMass, \%params, $H);
 	$targetFormula = $targetFormulaRef;
 	$decoyFormula = $decoyFormulaRef;
 	@targetStructures = @$targetStructRef;
@@ -70,12 +71,6 @@ if (scalar(@$targetFormula) == 0 && scalar(@$decoyFormula) == 0 && $params{'addu
 ###########################################
 ## Print out the result to a file (.out) ##
 ###########################################
-## Convert monoisotopic mass back to charged one according to the mode
-if ($params{'mode'} == -1) {
-	$monoMass = $monoMass - $H;
-} else {
-	$monoMass = $monoMass + $H;
-}
 my $index = 0;
 if (scalar(@targetStructures) == 0 && scalar(@decoyStructures) == 0) {
 	## If there's neither targets nor decoys, just finish this script
@@ -83,7 +78,7 @@ if (scalar(@targetStructures) == 0 && scalar(@decoyStructures) == 0) {
 } else {
 	my $outFile = $ms2File . ".out";
 	open (OUT, ">", $outFile);
-	print OUT "Index\tMass\tFormula\tName\tStructure\tInChi\tType\tAdduct\n";
+	print OUT "Index\tNeutralMass\tFormula\tName\tStructure\tInChi\tType\tAdduct\n";
 	if (scalar(@targetStructures) > 0) {
 		foreach my $targetStructure (@targetStructures) {
 			chomp ($targetStructure);
@@ -95,7 +90,7 @@ if (scalar(@targetStructures) == 0 && scalar(@decoyStructures) == 0) {
 			$formula =~ s/(\D+)1(\D+)/$1$2/g;
 			$formula =~ s/(\D+)1$/$1/g;
 			my $type = "Target";
-			print OUT "$index\t$monoMass\t$formula\t$name\t$struct\t$inchi\t$type\t$adduct\n";
+			print OUT "$index\t$neutralMass\t$formula\t$name\t$struct\t$inchi\t$type\t$adduct\n";
 		}
 	}
 	if (scalar(@decoyStructures) > 0) {
@@ -107,7 +102,7 @@ if (scalar(@targetStructures) == 0 && scalar(@decoyStructures) == 0) {
 			$formula =~ s/(\D+)1(\D+)/$1$2/g;
 			$formula =~ s/(\D+)1$/$1/g;			
 			my $type = "Decoy";
-			print OUT "$index\t$monoMass\t$formula\t$name\t$struct\t$inchi\t$type\t$adduct\n";
+			print OUT "$index\t$neutralMass\t$formula\t$name\t$struct\t$inchi\t$type\t$adduct\n";
 		}
 	}
 	close (OUT);

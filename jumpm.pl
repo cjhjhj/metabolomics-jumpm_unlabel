@@ -228,13 +228,15 @@ print FP "feature_file = $featureFile\n";
 my $tol_isolation = $$params{'isolation_window'} / 2;
 print FP "tol_isolation = $tol_isolation\n";
 foreach my $key (sort {$a cmp $b} keys %$params) {
-        if ($key eq "tol_precursor") {
-                print FP "$key" . " = " . $$params{$key} . "\n";
-        } elsif ($key eq "tol_intra_ms2_consolidation") {
-                print FP "$key" . " = " . $$params{$key} . "\n";
-        } elsif ($key eq "tol_inter_ms2_consolidation") {
-                print FP "$key" . " = " . $$params{$key} . "\n";
-        }
+	if ($key eq "tol_precursor") {
+		print FP "$key" . " = " . $$params{$key} . "\n";
+	} elsif ($key eq "tol_intra_ms2_consolidation") {
+		print FP "$key" . " = " . $$params{$key} . "\n";
+	} elsif ($key eq "tol_inter_ms2_consolidation") {
+		print FP "$key" . " = " . $$params{$key} . "\n";
+	} elsif ($key eq "mode") {
+		print FP "$key" . " = " . $$params{$key} . "\n";
+	}
 }
 for (my $i = 0; $i < scalar(@fileArray); $i++) {
 	foreach my $key (keys %fileHash) {

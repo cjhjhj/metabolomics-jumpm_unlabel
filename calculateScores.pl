@@ -37,8 +37,17 @@ while (<MS2>) {
 	push (@intArray, $intensity);
 }
 close (MS2);
-my $mz = (split(/\t/, $header))[0];
-my $charge = (split(/\t/, $header))[1];
+#my $MH = (split(/\t/, $header))[0];
+#my $charge = (split(/\t/, $header))[1];
+### Calculate 'neutral' monoisotopic mass to make a query
+### Mass .MS2 (i.e. dta-format) file is (M+H)+ for positive mode or (M-H)- for negative mode, where M = neutral mass
+#my $neutralMass;
+## = monoMass = ($mz - $H) * $charge + $H;
+#if ($params{'mode'} == -1) {
+#	$neutralMass = $MH + $H;
+#} else {
+#	$neutralMass = $MH - $H;
+#}
 
 ####################################
 ## Calculation of matching scores ##
