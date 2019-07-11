@@ -312,7 +312,7 @@ for (i in 1:length(featureToSpectra)) {
         if (params$mode == 1) {
             neutralMass = (mz - Hmass) * charge
             mh = neutralMass + Hmass
-        } else if (params$model == -1) {
+        } else if (params$mode == -1) {
             neutralMass = (mz + Hmass) * charge
             nh = neutralMass - Hmass
         }
