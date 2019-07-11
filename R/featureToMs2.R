@@ -314,7 +314,7 @@ for (i in 1:length(featureToSpectra)) {
             mh = neutralMass + Hmass
         } else if (params$mode == -1) {
             neutralMass = (mz + Hmass) * charge
-            nh = neutralMass - Hmass
+            mh = neutralMass - Hmass
         }
         spec = rbind(c(mh, charge), spec)
         filename = paste0(outDirectory, "/f", i, ".MS2")
