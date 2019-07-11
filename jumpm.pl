@@ -157,9 +157,15 @@ if ($$params{'skip_feature_detection'} == 0) {
 	print "\n  You submitted $nJobs jobs for database search\n";
 	checkJobStatus($nJobs, \%jobIDs, $queue);	
 } elsif ($$params{'skip_feature_detection'} == 1) {
+	print "  Feature detection step is skipped\n";
+	print "  The following feature files are used\n";
+	print $LOG "  Feature detection step is skipped\n";
+	print $LOG "  The following feature files are used\n";
 	## Skip feature detection
 	@featureFileArray = @{$$params{'feature_files'}};
-	foreach my $featureFile (@featureFileArray) {
+	foreach my $featureFile (sort {$a cmp $b} @featureFileArray) {
+		print "  $featureFile\n";
+		print $LOG "  $featureFile\n";
 		my $key = $featureFile;
 		my $value = $featureFile;
 		$key =~ s/\d+\.feature/mzXML/;
@@ -170,10 +176,12 @@ if ($$params{'skip_feature_detection'} == 0) {
 	$subDir = $featureFileArray[0];
 	$subDir =~ s/\.feature$//;
 } else {
-	print "'skip_feature_detection' parameter should be set properly\n";
-	print "Please check the parameter and try again\n";
+	print "  'skip_feature_detection' parameter should be set properly\n";
+	print "  Please check the parameter and try again\n";
 	exit;
 }
+print "\n";
+print $LOG "\n";
 
 #######################
 ## Feature alignment ##
