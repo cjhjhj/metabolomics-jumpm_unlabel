@@ -287,6 +287,9 @@ sub fisherExact {
 		}
 	}
 	$p = 1 - $p;	## One-tailed p-value
+	if ($p <= 0) {
+		$p = 1e-20;	## Sometimes, a very low p-value can be negative due to numerical issues
+	}
 	return ($p);
 }
 
