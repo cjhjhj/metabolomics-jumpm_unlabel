@@ -105,22 +105,14 @@ while (<OUT>) {
 		if ($params{'mode'} == 1) {	## Positive mode
 			@fragMzArray = map {$_ - 0.00054858} @fragMzArray;
 			if (lc($type) eq "decoy") {
-				## Add one more H+ to C (carbon)
-				for (my $i = 0; $i < scalar(@fragSmilesArray); $i++) {
-					if ($fragSmilesArray[$i] =~ /\[\C\+\]/) {
-						$fragMzArray[$i] += $H;
-					}
-				}
+				## Add one more H+ to all peaks (is it really a default decoy setting?)
+				@fragMzArray = map {$_ + $H} @fragMzArray;
 			}
 		} elsif ($params{'mode'} == -1) {	## Negative mode
 			@fragMzArray = map {$_ - 2 * $H + 0.00054858} @fragMzArray;
 			if (lc($type) eq "decoy") {
-				## Add one more H+ to C (carbon)
-				for (my $i = 0; $i < scalar(@fragSmilesArray); $i++) {
-					if ($fragSmilesArray[$i] =~ /\[\C\+\]/) {
-						$fragMzArray[$i] += $H;
-					}
-				}
+				## Add one more H+ to all peaks (is it really a default decoy setting?)
+				@fragMzArray = map {$_ + $H} @fragMzArray;
 			}
 		}
 		if (defined ($adduct)) {
