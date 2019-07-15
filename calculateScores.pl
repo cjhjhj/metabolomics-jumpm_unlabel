@@ -279,16 +279,13 @@ sub fisherExact {
 		}
 	}
 	$p = 1 - $p;	## One-tailed p-value
-	if ($p <= 0) {
-		$p = 1e-20;	## Sometimes, a very low p-value can be negative due to numerical issues
-	}
 	return ($p);
 }
 
 sub hypergeometric {
 	my ($n, $k, $r, $x) = @_;
 	my $pr = exp(choose($r, $x) + choose($n - $r, $k - $x) - choose($n, $k));	
-	return ($pr);
+	return sprintf("%e", $pr);	## Read as a scientific unit to prevent a numerical overflow
 }
 
 sub choose {
