@@ -270,22 +270,29 @@ sub calcPvalue {
 
 sub fisherExact {
 	my ($n, $k, $r, $x) = @_;
-	my $p = 0;
+	my @pr;
 	for (my $i = 0; $i < $x; $i++) {
 		if (($k - $i) >= 0 && ($r - $i) >= 0 && (($n - $r) - ($k - $i)) >= 0) {			
-			$p += hypergeometric($n, $k, $r, $i);
+			push (@pr, hypergeometric($n, $k, $r, $i));
 		} else {
 			next;
 		}
 	}
-	$p = 1 - $p;	## One-tailed p-value
+	## One-tailed p-value
+	my $p = 1 - sum(map {sprintf("%e", $_)} @pr);	## Scientific unit	
+	if ($p <= 0) {
+		$p = 1 - sum(map {sprintf("%.20f", $_)} @pr);	## 20 decimal points
+	}
+	if ($p <= 0) {
+		$p = 1e-20;	## If p-value is still 0 or negative, then saturate to 20
+	}	
 	return ($p);
 }
 
 sub hypergeometric {
 	my ($n, $k, $r, $x) = @_;
-	my $pr = exp(choose($r, $x) + choose($n - $r, $k - $x) - choose($n, $k));	
-	return sprintf("%e", $pr);	## Read as a scientific unit to prevent a numerical overflow
+	my $pr = exp(choose($r, $x) + choose($n - $r, $k - $x) - choose($n, $k));
+	return ($pr);
 }
 
 sub choose {
@@ -297,5 +304,5 @@ sub choose {
 		$result += log($n--);
 		$result -= log($j++);
 	}
-	return $result;
+	return ($result);
 }
