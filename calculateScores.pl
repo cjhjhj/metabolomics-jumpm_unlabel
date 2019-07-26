@@ -13,7 +13,7 @@ use List::Util qw(min max sum);
 
 my ($paramFile, $ms2OutFile) = @ARGV;
 my $ms2File = $ms2OutFile;
-$ms2File =~ s/\.out//;
+$ms2File =~ s/\.out$//;
 
 ##########################################
 ## Parameter loading and initialization ##
@@ -107,7 +107,7 @@ while (<OUT>) {
 				@fragMzArray = map {$_ + $H} @fragMzArray;
 			}
 		}
-		if (defined ($adduct)) {
+		if (defined ($adduct) && $adduct ne "NA") {
 			@fragMzArray = map {$_ + $params{$adduct}} @fragMzArray;
 		}
 		
