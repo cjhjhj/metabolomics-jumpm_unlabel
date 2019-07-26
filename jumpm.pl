@@ -2,6 +2,8 @@
 
 # Load all modules required by JUMPm 
 ## FindBin for getting current working directory
+use strict;
+use warnings;
 use FindBin qw($Bin);
 use lib "$Bin";
 use Spiders::Params;
@@ -70,7 +72,7 @@ if ($$params{'skip_feature_detection'} == 0) {
 	## Preparation of directories according to the names of input files
 	print "  Using the following raw files:\n";
 	print $LOG "  Using the following raw files:\n";
-	foreach $arg (sort @ARGV) {
+	foreach my $arg (sort @ARGV) {
 		if ($arg =~ /.[raw|RAW|mzXML]/) {
 			print "  $arg\n";
 			print $LOG "  $arg\n";
@@ -79,7 +81,7 @@ if ($$params{'skip_feature_detection'} == 0) {
 	my $nJobs = 0;
 	my $randNum = int(rand(100));
 	my %jobIDs;
-	foreach $arg (sort @ARGV) {
+	foreach my $arg (sort @ARGV) {
 		#############################################################
 		## Handling .raw (.mzXML) files and generating directories ##
 		#############################################################
@@ -273,9 +275,9 @@ if ($nFiles <= $maxJobs) {
 	$filesPerJob = int($nFiles / $maxJobs) + 1;
 }
 my $nTotalJobs = int($nFiles / $filesPerJob - 0.0001) + 1;
-$nJobs = 0;
-$randNum = int(rand(100));
-%jobIDs = {};
+my $nJobs = 0;
+my $randNum = int(rand(100));
+my %jobIDs = {};
 for (my $i = 0; $i < $nTotalJobs; $i++) {
 	$nJobs++;
 	my $jobName = "sch_m_$nJobs";
@@ -296,6 +298,14 @@ print "\n";
 ######################################################
 ## Calculation of scores for identified metabolites ##
 ######################################################
+my @ms2OutFileArray = glob("$ms2Path/*.MS2.out");
+$nFiles = scalar(@ms2OutFileArray);
+if ($nFiles <= $maxJobs) {
+	$maxJobs = $nFiles;
+	$filesPerJob = 1;
+} else {
+	$filesPerJob = int($nFiles / $maxJobs) + 1;
+}
 $nJobs = 0;
 $randNum = int(rand(100));
 %jobIDs = {};
@@ -306,7 +316,7 @@ for (my $i = 0; $i < $nTotalJobs; $i++) {
 	for (my $j = 0; $j < $filesPerJob; $j++) {
 		my $k = $filesPerJob * $i + $j;
 		last if ($k >= $nFiles);
-		$command .= "perl $Bin/calculateScores.pl $paramFile $ms2FileArray[$k]\n";
+		$command .= "perl $Bin/calculateScores.pl $paramFile $ms2OutFileArray[$k]\n";
 	}
 	my $job = $queue -> submit_job($ms2Path, $jobName, $command);
 	$jobIDs{$job} = 1;

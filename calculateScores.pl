@@ -1,5 +1,7 @@
 #!/usr/bin/perl
 
+use strict;
+use warnings;
 use FindBin qw($Bin);
 use lib "$Bin";
 use Spiders::DatabaseQuery;
@@ -9,7 +11,9 @@ use Data::Dumper;
 use File::Basename;
 use List::Util qw(min max sum);
 
-my ($paramFile, $ms2File) = @ARGV;
+my ($paramFile, $ms2OutFile) = @ARGV;
+my $ms2File = $ms2OutFile;
+$ms2File =~ s/\.out//;
 
 ##########################################
 ## Parameter loading and initialization ##
@@ -27,7 +31,7 @@ my $H = 1.007276466812;
 ####################################
 ## Read .MS2 file to obtain peaks ##
 ####################################
-open (MS2, "<", $ms2File);
+open (MS2, "<", $ms2File) or die "Cannot open $ms2File\n";
 my $header = <MS2>;
 my (@mzArray, @intArray);
 while (<MS2>) {
@@ -37,17 +41,6 @@ while (<MS2>) {
 	push (@intArray, $intensity);
 }
 close (MS2);
-#my $MH = (split(/\t/, $header))[0];
-#my $charge = (split(/\t/, $header))[1];
-### Calculate 'neutral' monoisotopic mass to make a query
-### Mass .MS2 (i.e. dta-format) file is (M+H)+ for positive mode or (M-H)- for negative mode, where M = neutral mass
-#my $neutralMass;
-## = monoMass = ($mz - $H) * $charge + $H;
-#if ($params{'mode'} == -1) {
-#	$neutralMass = $MH + $H;
-#} else {
-#	$neutralMass = $MH - $H;
-#}
 
 ####################################
 ## Calculation of matching scores ##
@@ -66,8 +59,7 @@ for (my $i = 0; $i < scalar(@mzArray); $i++) {
 
 ## Read .out file to calculate scores and write the result to .score file
 my $hasError = 0;
-my $outFile = $ms2File . ".out";
-open (OUT, "<", $outFile) or die "Cannot open $outFile\n";
+open (OUT, "<", $ms2OutFile) or die "Cannot open $ms2OutFile\n";
 $header = <OUT>;
 chomp ($header);
 my $scoreFile = $ms2File . ".score";
@@ -232,7 +224,7 @@ sub compareSpectra {
 			}
 		}
 	}
-	$nMatches = scalar (keys %matchedHash);
+	my $nMatches = scalar (keys %matchedHash);
 	return ($nMatches, \%matchedHash);
 }
 
