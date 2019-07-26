@@ -14,7 +14,7 @@ sub submit_job {
 	my $file = File::Spec->catfile($path, "$name.sh");
 	open (JOB, ">$file") or die "Cannot creat a job file\n";
 	print JOB "#!/bin/bash\n";
-	print JOB "#\$ -S /bin/bash\n";
+	#print JOB "#\$ -S /bin/bash\n";
 	print JOB "#\$ -N $name\n";
 	print JOB "#\$ -e $path/$name.e\n";
 	print JOB "#\$ -o $path/$name.o\n";
