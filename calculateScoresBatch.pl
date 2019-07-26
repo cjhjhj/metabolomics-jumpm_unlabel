@@ -21,6 +21,7 @@ use File::Basename;
 ## Initialization ##
 ####################
 my ($paramFile, $ms2Path) = @ARGV;
+$paramFile = abs_path($paramFile);
 ## Loading parameters
 my $p = Spiders::Params -> new('-path' => $paramFile);
 my $params = $p -> parseParams();
