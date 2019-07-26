@@ -108,7 +108,7 @@ while (<OUT>) {
 			}
 		}
 		if (defined ($adduct) && $adduct ne "NA") {
-			$adduct =~ s/adduct_//;
+			$adduct = "adduct_" . $adduct;;
 			@fragMzArray = map {$_ + $params{$adduct}} @fragMzArray;
 		}
 		
