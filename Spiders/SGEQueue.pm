@@ -20,7 +20,8 @@ sub submit_job {
 	print JOB "#\$ -o $path/$name.o\n";
 	print JOB $cmd;
 	close (JOB);
-	my $command = qq(cd $path && qsub -cwd -pe mpi 8 -l mem_free=8G,h_vmem=8G $file);
+#	my $command = qq(cd $path && qsub -cwd -pe mpi 8 -l mem_free=8G,h_vmem=8G $file);
+	my $command = qq(cd $path && qsub -cwd -pe mpi 8 $file);
 	my $job = lc(qx[$command]);
 	chomp ($job);
 	if ($job =~ /job (\d+)/) {
