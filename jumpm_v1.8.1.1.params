@@ -6,7 +6,7 @@
 ###############################################
 ## Whether skip the feature detection or not ##
 ###############################################
-skip_feature_detection = 1      # 0 = don't skip (i.e. perform feature detection), 1 = skip
+skip_feature_detection = 1       # 0 = don't skip (i.e. perform feature detection), 1 = skip
 
 ## If you choose 'skip_feature_detection = 1', then specify absolute path(s) of feature file(s) separated by new line
 feature_files = /home/htan/2019/IROA_library/neg/oldalgorithm/IROA_IS_NEG_1/IROA_IS_NEG_1.1.feature
@@ -16,21 +16,21 @@ feature_files = /home/htan/2019/IROA_library/neg/oldalgorithm/IROA_IS_NEG_1/IROA
 ####################################
 ## Parameters for data properties ##
 ####################################
-output_name = test	   # Used for unlabeled data analysis. Prefix "align_" will be automatically added
+output_name = test     # Used for unlabeled data analysis. Prefix "align_" will be automatically added
 library_search = 0     # 1 = library search; only enable for unlabeled data; 0 = disable
-mode = -1               # 1 = positive mode; -1 = negative mode
+mode = -1              # 1 = positive mode; -1 = negative mode
 adduct = 1             # 0 = disable adduct detection; 1 = enable
 
 #######################################
 ## Parameters for processing spectra ##
 #######################################
-data_acquisition_mode = 2       # 1 = centroid, 2 = profile for full scan and centroid for MS/MS scan 
-first_scan_extraction = 1       # the first scan used for search			 
-last_scan_extraction = 100      # the last scan used for search
-isolation_window = 1            # isolation window size 1= +/-0.5
-mass_correction = 0             # 0 = no correction, 1 = MS1-based
-decharge_ppm = 10               # intrascan isotopic tolerance for decharging
-deisotope_ppm = 10              # intrascan isotopic tolerance for decharging
+data_acquisition_mode = 2        # 1 = centroid, 2 = profile for full scan and centroid for MS/MS scan 
+first_scan_extraction = 1        # the first scan used for search			 
+last_scan_extraction = 100       # the last scan used for search
+isolation_window = 1             # isolation window size 1= +/-0.5
+mass_correction = 0              # 0 = no correction, 1 = MS1-based
+decharge_ppm = 10                # intrascan isotopic tolerance for decharging
+deisotope_ppm = 10               # intrascan isotopic tolerance for decharging
 
 ###########################################################
 ## Parameters for feature detection (for advanced users) ##
@@ -44,23 +44,26 @@ mass_tolerance_peak_matching = 3 # mass tolerance for peak matching during 3D fo
 ###########################################################
 ## Parameters for feature alignment (for advanced users) ##
 ###########################################################
+reference_feature = 0    # 0 = reference feature is automatically chosen,
+                         # otherwise put the absolute path of a feature file to be used as a reference
 tol_initial = 20         # initial m/z-tolerance for the global calibration (default = 20 ppm)
 sd_width = 5             # SD-width for RT- and m/z-tolerances 
                          # (when finding "matched/aligned" features, default = 5)
-rescue = 1               # 1 = rescue unaligned features by loosening RT- and m/z-tolerances; 0 = no
+skip_loading_bias_correction = 1 # 0 = don't skip (i.e. perform loading-bias correction/normalization), 1 = skip
+rescue = 1                       # 1 = rescue unaligned features by loosening RT- and m/z-tolerances; 0 = no
 ## RT- and m/z-tolerance settings in rescueing step (possibly multiple times)
-rt_tolerance_unit = 1, 2	# 1 = SD-width of dynamic RT-shifts, 2 = seconds
-rt_tolerance_value = 10, 10	# RT-tolerance value(s) according to the above unit(s)
-mz_tolerance_unit = 1, 2	# 1 = SD-width of dynamic m/z-shifts, 2 = ppm
-mz_tolerance_value = 10, 10	# m/z-tolerance value(s) according to the above unit(s)
-pct_full_alignment = 100            # percentage of samples are grouped into a feature
+rt_tolerance_unit = 1, 2         # 1 = SD-width of dynamic RT-shifts, 2 = seconds
+rt_tolerance_value = 10, 10      # RT-tolerance value(s) according to the above unit(s)
+mz_tolerance_unit = 1, 2         # 1 = SD-width of dynamic m/z-shifts, 2 = ppm
+mz_tolerance_value = 10, 10      # m/z-tolerance value(s) according to the above unit(s)
+pct_full_alignment = 100         # percentage of samples are grouped into a feature
 
 #############################################################################
 ## Parameters for processing MS2 spectra for features (for advanced users) ##
 #############################################################################
-tol_precursor = 10                 # PPM tolerance for finding a MS1 peak corresponding to a feature
-tol_intra_ms2_consolidation = 10   # PPM tolerance for merging MS2 spectra within a run
-tol_inter_ms2_consolidation = 20   # PPM tolerance for merging MS2 spectra between runs
+tol_precursor = 10               # PPM tolerance for finding a MS1 peak corresponding to a feature
+tol_intra_ms2_consolidation = 10 # PPM tolerance for merging MS2 spectra within a run
+tol_inter_ms2_consolidation = 20 # PPM tolerance for merging MS2 spectra between runs
 
 ####################################
 ## Parameters for database search ##
