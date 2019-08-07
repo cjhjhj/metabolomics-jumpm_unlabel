@@ -209,6 +209,10 @@ foreach my $key (sort {$a cmp $b} keys %$params) {
 		print AP "$key" . " = " . $$params{$key} . "\n";
 	} elsif ($key eq "mz_tolerance_value") {
 		print AP "$key" . " = " . $$params{$key} . "\n";
+	} elsif ($key eq "reference_feature") {
+		print AP "$key" . " = " . $$params{$key} . "\n";
+	} elsif ($key eq "skip_loading_bias_correction") {
+		print AP "$key" . " = " . $$params{$key} . "\n";
 	}
 }
 
