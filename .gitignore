@@ -15,3 +15,16 @@ IROAlibrary/
 alignment.params
 featureToMs2.params
 test.pl
+Jumpm_diagram_20190826.png
+Jumpm_diagram_20190826.pptx
+alignment_residual.txt
+alignment_result.txt
+calculated_rt_pvalue.txt
+compRt.txt
+compRt_new.txt
+featureMS2
+libMS2
+libSearchResult_IROA_IS_NEG_1.txt
+libSearchResult_IROA_IS_NEG_1_20190925.txt
+measured_rt_error.txt
+refRt.txt
