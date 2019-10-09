@@ -31,7 +31,7 @@ if ($params{'mode'} == -1) {
 	$columnInfo .= "p";
 }
 my @libInfo;
-my $libFile = $params{'library_file'};
+my $libFile = $params{'library'};
 open (LIB, "<", $libFile) or die "Cannot open $libFile\n";
 my $header = <LIB>;
 my @headerElems = split(/\t/, $header);

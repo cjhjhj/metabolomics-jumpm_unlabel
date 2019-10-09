@@ -281,141 +281,150 @@ system ($command);
 ##================##
 ## Library search ##
 ##================##
-$command = "perl $Bin/librarySearch.pl $paramFile $fullyAlignedFeatureFile $ms2Path\n";
-system ($command);
+if ($$params{'library_search'} == 1) {
+	$command = "perl $Bin/librarySearch.pl $paramFile $fullyAlignedFeatureFile $ms2Path\n";
+	system ($command);	
+} else {
+	print "  Libraray search is skipped according to the parameter\n";
+	print $LOG "  Libraray search is skipped according to the parameter\n";
+}
 
 ##=================##
 ## Database search ##
 ##=================##
-
-#########################################################################
-## Database search to identify metabolites using individual .MS2 files ##
-#########################################################################
-my @ms2FileArray = glob("$ms2Path/*.MS2");
-my $nFiles = scalar(@ms2FileArray);
-my $maxJobs = 200;
-my $filesPerJob;
-if ($nFiles <= $maxJobs) {
-	$maxJobs = $nFiles;
-	$filesPerJob = 1;
-} else {
-	$filesPerJob = int($nFiles / $maxJobs) + 1;
-}
-my $nTotalJobs = int($nFiles / $filesPerJob - 0.0001) + 1;
-my $nJobs = 0;
-my $randNum = int(rand(100));
-my %jobIDs = {};
-for (my $i = 0; $i < $nTotalJobs; $i++) {
-	$nJobs++;
-	my $jobName = "sch_m_$nJobs";
-	my $command = "";
-	for (my $j = 0; $j < $filesPerJob; $j++) {
-		my $k = $filesPerJob * $i + $j;
-		last if ($k >= $nFiles);
-		$command .= "perl $Bin/databaseSearch.pl $paramFile $ms2FileArray[$k]\n";
+if ($$params{'database_search'} == 1) {
+	#########################################################################
+	## Database search to identify metabolites using individual .MS2 files ##
+	#########################################################################
+	my @ms2FileArray = glob("$ms2Path/*.MS2");
+	my $nFiles = scalar(@ms2FileArray);
+	my $maxJobs = 200;
+	my $filesPerJob;
+	if ($nFiles <= $maxJobs) {
+		$maxJobs = $nFiles;
+		$filesPerJob = 1;
+	} else {
+		$filesPerJob = int($nFiles / $maxJobs) + 1;
 	}
-	my $job = $queue -> submit_job($ms2Path, $jobName, $command);
-	$jobIDs{$job} = 1;
-	print "\r  $nJobs database search jobs are submitted";
-}
-print "\n  You submitted $nJobs jobs for database search\n";
-checkJobStatus($nJobs, \%jobIDs, $queue);
-print "\n";
-
-######################################################
-## Calculation of scores for identified metabolites ##
-######################################################
-my @ms2OutFileArray = glob("$ms2Path/*.MS2.out");
-$nFiles = scalar(@ms2OutFileArray);
-if ($nFiles <= $maxJobs) {
-	$maxJobs = $nFiles;
-	$filesPerJob = 1;
-} else {
-	$filesPerJob = int($nFiles / $maxJobs) + 1;
-}
-$nJobs = 0;
-$randNum = int(rand(100));
-%jobIDs = {};
-for (my $i = 0; $i < $nTotalJobs; $i++) {
-	$nJobs++;
-	my $jobName = "score_m_$nJobs";
-	my $command = "";
-	for (my $j = 0; $j < $filesPerJob; $j++) {
-		my $k = $filesPerJob * $i + $j;
-		last if ($k >= $nFiles);
-		$command .= "perl $Bin/calculateScores.pl $paramFile $ms2OutFileArray[$k]\n";
-	}
-	my $job = $queue -> submit_job($ms2Path, $jobName, $command);
-	$jobIDs{$job} = 1;
-	print "\r  $nJobs database search jobs are submitted";
-}
-print "\n  You submitted $nJobs jobs for database search\n";
-checkJobStatus($nJobs, \%jobIDs, $queue);
-print "\n";
-
-##################################
-## Create a result table (file) ##
-##################################
-print "\n  Tables containing results are being generated\n";
-$ms2Path =~ s/\/$//;
-my $outFile1 = $ms2Path . ".spectrum_matches";  ## .spectrum_matches file containing all target and decoy structures with mscores for each feature
-my $outFile2 = $ms2Path . ".structure"; ## .structure file containing a unique (target or decoy structure
-open (OUT1, ">", $outFile1) or die "Cannot open $outFile1\n";
-open (OUT2, ">", $outFile2) or die "Cannot open $outFile2\n";
-my $header = "FeatureNo\tMass\tFormula\tName\tStructure\tInChi\tType\tAdduct\t" .
-                        "NumMeasuredPeaks\tNumTheoreticalPeaks\tNumMatchedPeaks\tMscore\tIntensityRatio\n";
-print OUT1 $header;
-print OUT2 $header;
-
-## Sort .score files according to the feature number
-my @scoreFiles = glob("$ms2Path/*.score");
-my @featureNums;
-foreach my $scoreFile (@scoreFiles) {
-	my ($featureNum) = $scoreFile =~ /f(\d+)\.MS2\.score/;
-	push (@featureNums, $featureNum);
-}
-my @index = sort {$featureNums[$a] <=> $featureNums[$b]} (0..$#featureNums);
-@featureNums = @featureNums[@index];
-@scoreFiles = @scoreFiles[@index];
-
-## Read each .score file and write to output files
-for (my $i = 0; $i < scalar(@scoreFiles); $i++) {
-	open (SCORE, "<", $scoreFiles[$i]) or die "Cannot open $scoreFiles[$i]\n";
-	my $bestEntry;  ## The best structure which has the highest "mscore"
-	my $bestMscore = 0;
-	while (<SCORE>) {
-		chomp ($_);
-		my $line = $_;
-		next if ($line =~ "Index");
-
-		## Replace the first element of $line (i.e. contents of .score file) with 'feature number' 
-		my @elems = split(/\t/, $line);
-		$elems[0] = $featureNums[$i];
-		$line = join("\t", @elems);
-		
-		## Write to .spectrum_matches file
-		print OUT1 $line, "\n";
-
-		## Choose the entry with the highest mscore (i.e. best entry)
-		my $mscore = (split(/\t/, $line))[-2];  ## mscore is the second last element
-		if ($mscore == -0) {
-			$mscore = 0;
+	my $nTotalJobs = int($nFiles / $filesPerJob - 0.0001) + 1;
+	my $nJobs = 0;
+	my $randNum = int(rand(100));
+	my %jobIDs = {};
+	for (my $i = 0; $i < $nTotalJobs; $i++) {
+		$nJobs++;
+		my $jobName = "sch_m_$nJobs";
+		my $command = "";
+		for (my $j = 0; $j < $filesPerJob; $j++) {
+			my $k = $filesPerJob * $i + $j;
+			last if ($k >= $nFiles);
+			$command .= "perl $Bin/databaseSearch.pl $paramFile $ms2FileArray[$k]\n";
 		}
-		if (!defined ($bestEntry)) {
-			$bestEntry = $line;
-			$bestMscore = $mscore;
-		} else {
-			if ($mscore > $bestMscore) {
+		my $job = $queue -> submit_job($ms2Path, $jobName, $command);
+		$jobIDs{$job} = 1;
+		print "\r  $nJobs database search jobs are submitted";
+	}
+	print "\n  You submitted $nJobs jobs for database search\n";
+	checkJobStatus($nJobs, \%jobIDs, $queue);
+	print "\n";
+	
+	######################################################
+	## Calculation of scores for identified metabolites ##
+	######################################################
+	my @ms2OutFileArray = glob("$ms2Path/*.MS2.out");
+	$nFiles = scalar(@ms2OutFileArray);
+	if ($nFiles <= $maxJobs) {
+		$maxJobs = $nFiles;
+		$filesPerJob = 1;
+	} else {
+		$filesPerJob = int($nFiles / $maxJobs) + 1;
+	}
+	$nJobs = 0;
+	$randNum = int(rand(100));
+	%jobIDs = {};
+	for (my $i = 0; $i < $nTotalJobs; $i++) {
+		$nJobs++;
+		my $jobName = "score_m_$nJobs";
+		my $command = "";
+		for (my $j = 0; $j < $filesPerJob; $j++) {
+			my $k = $filesPerJob * $i + $j;
+			last if ($k >= $nFiles);
+			$command .= "perl $Bin/calculateScores.pl $paramFile $ms2OutFileArray[$k]\n";
+		}
+		my $job = $queue -> submit_job($ms2Path, $jobName, $command);
+		$jobIDs{$job} = 1;
+		print "\r  $nJobs database search jobs are submitted";
+	}
+	print "\n  You submitted $nJobs jobs for database search\n";
+	checkJobStatus($nJobs, \%jobIDs, $queue);
+	print "\n";
+	
+	##################################
+	## Create a result table (file) ##
+	##################################
+	print "\n  Tables containing results are being generated\n";
+	$ms2Path =~ s/\/$//;
+	my $outFile1 = $ms2Path . ".spectrum_matches";  ## .spectrum_matches file containing all target and decoy structures with mscores for each feature
+	my $outFile2 = $ms2Path . ".structure"; ## .structure file containing a unique (target or decoy structure
+	open (OUT1, ">", $outFile1) or die "Cannot open $outFile1\n";
+	open (OUT2, ">", $outFile2) or die "Cannot open $outFile2\n";
+	my $header = "FeatureNo\tMass\tFormula\tName\tStructure\tInChi\tType\tAdduct\t" .
+	                        "NumMeasuredPeaks\tNumTheoreticalPeaks\tNumMatchedPeaks\tMscore\tIntensityRatio\n";
+	print OUT1 $header;
+	print OUT2 $header;
+	
+	## Sort .score files according to the feature number
+	my @scoreFiles = glob("$ms2Path/*.score");
+	my @featureNums;
+	foreach my $scoreFile (@scoreFiles) {
+		my ($featureNum) = $scoreFile =~ /f(\d+)\.MS2\.score/;
+		push (@featureNums, $featureNum);
+	}
+	my @index = sort {$featureNums[$a] <=> $featureNums[$b]} (0..$#featureNums);
+	@featureNums = @featureNums[@index];
+	@scoreFiles = @scoreFiles[@index];
+	
+	## Read each .score file and write to output files
+	for (my $i = 0; $i < scalar(@scoreFiles); $i++) {
+		open (SCORE, "<", $scoreFiles[$i]) or die "Cannot open $scoreFiles[$i]\n";
+		my $bestEntry;  ## The best structure which has the highest "mscore"
+		my $bestMscore = 0;
+		while (<SCORE>) {
+			chomp ($_);
+			my $line = $_;
+			next if ($line =~ "Index");
+	
+			## Replace the first element of $line (i.e. contents of .score file) with 'feature number' 
+			my @elems = split(/\t/, $line);
+			$elems[0] = $featureNums[$i];
+			$line = join("\t", @elems);
+			
+			## Write to .spectrum_matches file
+			print OUT1 $line, "\n";
+	
+			## Choose the entry with the highest mscore (i.e. best entry)
+			my $mscore = (split(/\t/, $line))[-2];  ## mscore is the second last element
+			if ($mscore == -0) {
+				$mscore = 0;
+			}
+			if (!defined ($bestEntry)) {
 				$bestEntry = $line;
 				$bestMscore = $mscore;
+			} else {
+				if ($mscore > $bestMscore) {
+					$bestEntry = $line;
+					$bestMscore = $mscore;
+				}
 			}
 		}
+		close (SCORE);
+		print OUT2 $bestEntry, "\n";
 	}
-	close (SCORE);
-	print OUT2 $bestEntry, "\n";
+	close (OUT1);
+	close (OUT2);	
+} else {
+	print "  Database search is skipped according to the parameter\n";
+	print $LOG "  Database search is skipped according to the parameter\n";	
 }
-close (OUT1);
-close (OUT2);
 print "\n  Jump -m for unlabeled data is finished\n";
 
 #################

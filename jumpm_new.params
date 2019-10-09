@@ -1,7 +1,6 @@
-##############################
-## Parameter file for JUMPm ##
-## 2019/10/9                ##
-##############################
+##############################################
+## Parameter file for JUMPm as of 2019/10/9 ##
+##############################################
 
 #####################################
 ## Determination of search methods ##
@@ -9,25 +8,16 @@
 database_search = 1    # 0 = do not search a database, 1 = search a database (database should be specified)
 library_search = 1     # 0 = do not search a library,  1 = search a library  (library should be specified)
 
-####################################
-## Parameters for database search ##
-####################################
-database = HMDB,YMDB   # database type: PUBCHEM, YMDB, HMDB; 
-                       # use "," to combine two databases if you want to search a combined database
+########################################################
+## Parameters for search methods and output directory ##
+########################################################
+database = HMDB,YMDB   # database type: PUBCHEM, YMDB, HMDB (use "," to combine multiple databases if you want to search a combined database)
+library = /home/jcho/dev/JUMPm/Metabolome_library_v0.1.4.txt        # path of .txt file containing library compound information                       
+output_name = test     # Used for unlabeled data analysis. Prefix "align_" will be automatically added
+
 mass_formula_database = /home/xwang4/JUMPm_database/MASS_FORMULA_DB      # mass formula database   
 structure_database = /home/xwang4/JUMPm_database/STRUCTURE_DB            # structure database
-formula_mass_tolerance_searching = 10    # mass tolerance between mono mass and formula
-                                         # for searching formula (ppm)
-
-###################################
-## Parameters for library search ##
-###################################
-library_file = /home/jcho/dev/JUMPm/Metabolome_library_v0.1.4.txt        # path of .txt file containing library compound information
-
-###########################
-## Output directory name ##
-###########################
-output_name = test     # Used for unlabeled data analysis. Prefix "align_" will be automatically added
+formula_mass_tolerance_searching = 10    # mass tolerance for searching formula (ppm)
 
 ####################################
 ## Parameters for data properties ##
@@ -39,7 +29,6 @@ adduct = 1             # 0 = disable adduct detection, 1 = enable
 ## Whether skip the feature detection or not ##
 ###############################################
 skip_feature_detection = 1       # 0 = don't skip (i.e. perform feature detection), 1 = skip
-
 ## If you choose 'skip_feature_detection = 1', then specify absolute path(s) of feature file(s) separated by new line
 feature_files = /home/htan/2019/IROA_library/neg/oldalgorithm/IROA_IS_NEG_1/IROA_IS_NEG_1.1.feature
 /home/htan/2019/IROA_library/neg/oldalgorithm/IROA_IS_NEG_2/IROA_IS_NEG_2.1.feature
