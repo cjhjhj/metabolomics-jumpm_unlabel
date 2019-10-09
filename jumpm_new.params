@@ -22,6 +22,7 @@ formula_mass_tolerance_searching = 10    # mass tolerance for searching formula 
 ####################################
 ## Parameters for data properties ##
 ####################################
+LC_column = HILIC      # type of LC column, e.g. HILIC, C18, C4, etc.
 mode = -1              # 1 = positive mode, -1 = negative mode
 adduct = 1             # 0 = disable adduct detection, 1 = enable
 
