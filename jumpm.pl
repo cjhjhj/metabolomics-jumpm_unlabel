@@ -26,22 +26,18 @@ if (!-e($RLibrary)) {
 	print "R scripts are NOT accessible from jump -m\n";
 	exit;
 }
-my ($help, $paramFile, $rawFile);
-GetOptions('-help|h'=> \$help, 
-			'-p=s' => \$paramFile,
-			);
+my $paramFile;
+GetOptions('-p=s' => \$paramFile,);
 if (!-e ($paramFile)) {
 	print "Please input the parameter file\n\n";
 	exit;
 }
 $paramFile = abs_path($paramFile);
-usage() if ($help || !defined($paramFile));
 
 ## Define a log file usings time() function
 my $tmpLog = time();
 my $LOG;
-## For unlabeled data, 
-## the log file should be open with append option to include R script captions
+## For unlabeled data, the log file should be open with append option to include R script captions
 open ($LOG, ">>", "./$tmpLog");
 print "\n\n  Initializing JUMPm program\n\n";
 print $LOG "\n\n  Initializing JUMPm program\n\n";
@@ -67,8 +63,7 @@ my %fileHash;
 my @fileArray;
 my @featureFileArray;
 if ($$params{'skip_feature_detection'} == 0) {
-	## Perform feature detection using input .raw (or .mzXML) files
-	
+	## Perform feature detection using input .raw (or .mzXML) files	
 	## Preparation of directories according to the names of input files
 	print "  Using the following raw files:\n";
 	print $LOG "  Using the following raw files:\n";
@@ -90,14 +85,17 @@ if ($$params{'skip_feature_detection'} == 0) {
 		if ($arg =~ /.[raw|RAW|mzXML]/) {
 			push (@fileArray, $arg);
 			my ($fileName, $directory, $extension) = fileparse($arg, @extensionList);
-			## If $arg = /Example/unlabeled_data/12C_HILIC_Neg.mzXML, then
+			## If $arg = (/Example/unlabeled_data/)12C_HILIC_Neg.mzXML, then
 			## $filename = "12C_HILIC_Neg"
 			## $directory = "/Example/unlabeled_data/"
 			## $extension = "mzXML"
 			my $dataDir = "$directory/$fileName";
 			$dataDir =~ s/\/\//\//g;	## Change any double slashes (//) to single ones (/)
 			system (qq(mkdir $dataDir >/dev/null 2>&1));
-			system (qq(mv $arg $dataDir >/dev/null 2>&1));		
+			system (qq(mv $arg $dataDir >/dev/null 2>&1));
+			## At this point, $dataDir = /Example/unlabeled_data/12C_HILIC_Neg
+			## Input file will be moved to the above $dataDir, /Example/unlabeled_data/12C_HILIC_Neg/12C_HILIC_Neg.mzXML
+
 			if (!-e($dataDir)) {
 				print "  There is no such file ($arg)!\n";
 				exit;
@@ -157,7 +155,7 @@ if ($$params{'skip_feature_detection'} == 0) {
 		}
 	}
 	print "\n  You submitted $nJobs jobs for database search\n";
-	checkJobStatus($nJobs, \%jobIDs, $queue);	
+	checkJobStatus($nJobs, \%jobIDs, $queue);
 } elsif ($$params{'skip_feature_detection'} == 1) {
 	print "  Feature detection step is skipped\n";
 	print "  The following feature files are used\n";
@@ -182,6 +180,17 @@ if ($$params{'skip_feature_detection'} == 0) {
 	print "  Please check the parameter and try again\n";
 	exit;
 }
+## At this point, feature files are generated and located in the subdirectories, e.g.
+## current working directory = /Example/unlabeled_data/
+## /Example/unlabeled_data/jump_m.params
+## /Example/unlabeled_data/12C_HILIC_Neg/12C_HILIC_Neg.mzXML
+## /Example/unlabeled_data/12C_HILIC_Neg/12C_HILIC_Neg.mzXML
+## /Example/unlabeled_data/12C_HILIC_Neg/12C_HILIC_Neg.1.tmp.feature
+## /Example/unlabeled_data/12C_HILIC_Neg/12C_HILIC_Neg.1.feature
+## /Example/unlabeled_data/12C_HILIC_Neg/12C_HILIC_Neg.1/ ...
+## ...
+## $dataDir = /Example/unlabeled_data/12C_HILIC_Neg
+## $subDir =  /Example/unlabeled_data/12C_HILIC_Neg/12C_HILIC_Neg.1/
 print "\n";
 print $LOG "\n";
 
@@ -222,14 +231,16 @@ my $alignDir = "./align_" . $$params{'output_name'};
 system(qq(mkdir $alignDir >/dev/null 2>&1));
 my $command = "Rscript $Bin/R/alignment.R alignment.params $featureFiles $tmpLog $Bin $alignDir";
 system ($command);
+## $alignDir = ./align_test/ (when $$params{'output_name'} = test)
+## abs_path($alignDir) = /Example/unlabeled_data/align_test/
 
 #########################################
 ## Processing MS2 spectra for features ##
 #########################################
 ## Create featureToMs2.params file
 open (FP, ">", "featureToMs2.params");
-my $featureFile = $alignDir . "/" . $$params{'output_name'} . "_fully_aligned.feature";
-print FP "feature_file = $featureFile\n";
+my $fullyAlignedFeatureFile = abs_path($alignDir) . "/" . $$params{'output_name'} . "_fully_aligned.feature";
+print FP "feature_file = $fullyAlignedFeatureFile\n";
 ## "tol_isolation" in featureToMs2 should be the same as "isolation_window" parameter
 my $tol_isolation = $$params{'isolation_window'} / 2;
 print FP "tol_isolation = $tol_isolation\n";
@@ -264,6 +275,18 @@ my ($ms2Path) = $subDir =~ /(\.\d+$)/;
 $ms2Path = abs_path($alignDir) . "/align_" . $$params{'output_name'} . $ms2Path;
 $command = "Rscript $Bin/R/featureToMs2.R featureToMs2.params $ms2Path $tmpLog";
 system ($command);
+## $ms2Path = /Example/unlabeled_data/align_test/align_test.1/
+## i.e. $ms2Path indicates the path where .MS2 files for fully-aligned features are located
+
+##================##
+## Library search ##
+##================##
+$command = "perl $Bin/librarySearch.pl $paramFile $fullyAlignedFeatureFile $ms2Path\n";
+system ($command);
+
+##=================##
+## Database search ##
+##=================##
 
 #########################################################################
 ## Database search to identify metabolites using individual .MS2 files ##

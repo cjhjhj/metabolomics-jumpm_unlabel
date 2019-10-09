@@ -9,10 +9,11 @@ use List::Util qw(min max);
 use List::MoreUtils qw(indexes first_index);
 use Statistics::Lite qw(mean median);
 
-####################
-## Initialization ##
-####################
-my ($paramFile, $featFile, $ms2Path) = @ARGV;
+##########################################
+## Parameter loading and initialization ##
+##########################################
+#my $paramFile = @ARGV;
+my $paramFile = "jumpm_v1.8.1.1.params";
 my %params = getParams($paramFile);
 my $H = 1.007276466812;
 my $matchMzTol = 10;  ## Unit of ppm
@@ -24,6 +25,11 @@ my $matchRtTol = 10;  ## Unit of second
 ## Column names are determined based on 
 ## type of LC column (C4, C8, C18 or HILIC) and mode (pos or neg),
 print "Loading a library\n";
+
+
+$params{'LC_column'} = "hilic";
+
+
 my $columnInfo = lc($params{'LC_column'});
 if ($params{'mode'} == -1) {
 	$columnInfo .= "n";
@@ -31,7 +37,8 @@ if ($params{'mode'} == -1) {
 	$columnInfo .= "p";
 }
 my @libInfo;
-my $libFile = $params{'library_file'};
+my $libFile = "./IROAlibrary/Metabolome_library_v0.1.4.txt";
+my $libMS2Path = "./IROAlibrary/MS2/";
 open (LIB, "<", $libFile) or die "Cannot open $libFile\n";
 my $header = <LIB>;
 my @headerElems = split(/\t/, $header);
@@ -42,7 +49,7 @@ while (<LIB>) {
 	@{$libInfo[$i]}{@headerElems} = @elems;
 
 	## Open .MS2 file and calculate m/z of the library feature
-	my $ms2File = $libInfo[$i]{"$columnInfo" . "_linkms2"};
+	my $ms2File = $libMS2Path . $libInfo[$i]{"$columnInfo" . "_linkms2"};
 	open (MS2, "<", $ms2File) or die "Cannot open $ms2File\n";
 	my $header = <MS2>;
 	while (<MS2>) {
@@ -79,6 +86,8 @@ print "\n";
 ## Note that the header of .MS2 file contains (M+H)+ or (M-H)-, and charge state
 print "\nLoading feature information\n";
 my @featInfo;
+my $featFile = "./IROAsamples/test_IROA_IS_NEG_1.1.feature"; 
+my $ms2Path = "./IROAsamples/MS2";
 open (FEATURE, "<", $featFile) or die "Cannot open $featFile\n";
 $header = <FEATURE>;
 @headerElems = split(/\t/, $header);
