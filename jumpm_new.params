@@ -6,8 +6,23 @@
 #####################################
 ## Determination of search methods ##
 #####################################
-database_search = 1              # 0 = do not search a database, 1 = search a database (database should be specified)
-library_search = 1               # 0 = do not search a library,  1 = search a library  (library should be specified)
+database_search = 1    # 0 = do not search a database, 1 = search a database (database should be specified)
+library_search = 1     # 0 = do not search a library,  1 = search a library  (library should be specified)
+
+####################################
+## Parameters for database search ##
+####################################
+database = HMDB,YMDB   # database type: PUBCHEM, YMDB, HMDB; 
+                       # use "," to combine two databases if you want to search a combined database
+mass_formula_database = /home/xwang4/JUMPm_database/MASS_FORMULA_DB      # mass formula database   
+structure_database = /home/xwang4/JUMPm_database/STRUCTURE_DB            # structure database
+formula_mass_tolerance_searching = 10    # mass tolerance between mono mass and formula
+                                         # for searching formula (ppm)
+
+###################################
+## Parameters for library search ##
+###################################
+library_file = /home/jcho/dev/JUMPm/Metabolome_library_v0.1.4.txt        # path of .txt file containing library compound information
 
 ###########################
 ## Output directory name ##
@@ -53,13 +68,14 @@ mass_tolerance_peak_matching = 3 # mass tolerance for peak matching during 3D fo
 ###########################################################
 ## Parameters for feature alignment (for advanced users) ##
 ###########################################################
-reference_feature = 0    # 0 = reference feature is automatically chosen,
-                         # otherwise put the absolute path of a feature file to be used as a reference
-tol_initial = 20         # initial m/z-tolerance for the global calibration (default = 20 ppm)
-sd_width = 5             # SD-width for RT- and m/z-tolerances 
-                         # (when finding "matched/aligned" features, default = 5)
+reference_feature = 0            # 0 = reference feature is automatically chosen,
+                                 # otherwise put the absolute path of a feature file to be used as a reference
+tol_initial = 20                 # initial m/z-tolerance for the global calibration (default = 20 ppm)
+sd_width = 5                     # SD-width for RT- and m/z-tolerances 
+                                 # (when finding "matched/aligned" features, default = 5)
 skip_loading_bias_correction = 1 # 0 = don't skip (i.e. perform loading-bias correction/normalization), 1 = skip
 rescue = 1                       # 1 = rescue unaligned features by loosening RT- and m/z-tolerances; 0 = no
+
 ## RT- and m/z-tolerance settings in rescueing step (possibly multiple times)
 rt_tolerance_unit = 1, 2         # 1 = SD-width of dynamic RT-shifts, 2 = seconds
 rt_tolerance_value = 10, 10      # RT-tolerance value(s) according to the above unit(s)
@@ -73,16 +89,6 @@ pct_full_alignment = 100         # percentage of samples are grouped into a feat
 tol_precursor = 10               # PPM tolerance for finding a MS1 peak corresponding to a feature
 tol_intra_ms2_consolidation = 10 # PPM tolerance for merging MS2 spectra within a run
 tol_inter_ms2_consolidation = 20 # PPM tolerance for merging MS2 spectra between runs
-
-####################################
-## Parameters for database search ##
-####################################
-database = HMDB,YMDB   # database type: PUBCHEM, YMDB, HMDB; 
-                       # use "," to combine two databases if you want to search a combined database
-mass_formula_database = /home/xwang4/JUMPm_database/MASS_FORMULA_DB      # mass formula database   
-structure_database = /home/xwang4/JUMPm_database/STRUCTURE_DB            # structure database
-formula_mass_tolerance_searching = 10    # mass tolerance between mono mass and formula
-                                         # for searching formula (ppm)
 
 #########################################
 ## Parameters for matching MS2 spectra ##
