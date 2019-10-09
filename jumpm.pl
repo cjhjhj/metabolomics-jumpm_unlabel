@@ -49,9 +49,9 @@ my $params = $p -> parseParams();
 
 ## Set the job management
 my $queue;
-if ($$params{'cluster'} == 1 && ($$params{'cluster_type'} eq "LSF" || $$params{'job_management_system'} eq "LSF")) {
+if ($$params{'cluster'} == 1 && $$params{'job_management_system'} eq "LSF") {
 	$queue = Spiders::LSFQueue->new();
-} elsif ($$params{'cluster'} == 1 && ($$params{'cluster_type'} eq "SGE" || $$params{'job_management_system'} eq "SGE")) {
+} elsif ($$params{'cluster'} == 1 && $$params{'job_management_system'} eq "SGE") {
     $queue = Spiders::SGEQueue->new();
 }
 
