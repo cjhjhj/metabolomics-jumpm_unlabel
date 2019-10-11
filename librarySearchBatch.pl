@@ -13,12 +13,68 @@ use Statistics::Lite qw(mean median);
 ## Parameter loading and initialization ##
 ##########################################
 #my $paramFile = @ARGV;
-my $paramFile = "jumpm_v1.8.1.1.params";
+my $paramFile = "jumpm_new.params";
 my %params = getParams($paramFile);
 my $H = 1.007276466812;
 my $matchMzTol = 10;  ## Unit of ppm
 my $matchRtTol = 10;  ## Unit of second
 
+###########################
+## Read library entities ##
+###########################
+## Column names are determined based on 
+## type of LC column (C4, C8, C18 or HILIC) and mode (pos or neg),
+print "Loading a library\n";
+my $columnInfo = lc($params{'LC_column'});
+if ($params{'mode'} == -1) {
+	$columnInfo .= "n";
+} elsif ($params{'mode'} == 1) {
+	$columnInfo .= "p";
+}
+my @libInfo;
+my $libFile = $params{'library'};
+open (LIB, "<", $libFile) or die "Cannot open $libFile\n";
+my $header = <LIB>;
+my @headerElems = split(/\t/, $header);
+my $i = 0;
+while (<LIB>) {
+	chomp($_);
+	my @elems = split(/\t/, $_);
+	@{$libInfo[$i]}{@headerElems} = @elems;
+
+	## Open .MS2 file and calculate m/z of the library feature
+	my $ms2File = $libInfo[$i]{"$columnInfo" . "_linkms2"};
+	open (MS2, "<", $ms2File) or die "Cannot open $ms2File\n";
+	my $header = <MS2>;
+	while (<MS2>) {
+		chomp ($_);
+		my ($mz, $int) = split(/\t/, $_);
+		push (@{$libInfo[$i]{"$columnInfo" . "_ms2"}{'mz'}}, $mz);
+		push (@{$libInfo[$i]{"$columnInfo" . "_ms2"}{'int'}}, $int);
+	}
+	close (MS2);
+	chomp($header);
+	my ($MH, $charge) = split(/\t/, $header);	## Note that .MS2 file has M+H (or M-H) 
+
+	## Check the charge state
+	if ($libInfo[$i]{"$columnInfo" . "_charge"} > 0 && $libInfo[$i]{"$columnInfo" . "_charge"} != $charge) {
+		die "Charge state of the $i-th library entry\n";
+	}
+
+	my $mz;
+	if ($params{'mode'} == 1) {
+		$mz =(($MH - $H) + $charge * $H) / $charge;
+	} elsif ($params{'mode'} == -1) {
+		$mz = (($MH + $H) - $charge * $H) / $charge;
+	}
+	$libInfo[$i]{"$columnInfo" . "_mz"} = $mz;
+	$i++;
+	print "\rParsing #$i entries in the library";
+}
+close (LIB);
+print "\n";
+
+=head
 ###########################
 ## Read library entities ##
 ###########################
@@ -79,6 +135,7 @@ while (<LIB>) {
 }
 close (LIB);
 print "\n";
+=cut
 
 ##############################
 ## Read feature information ##

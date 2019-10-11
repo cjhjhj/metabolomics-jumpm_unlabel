@@ -175,7 +175,7 @@ for (my $i = 1; $i < scalar(@featInfo); $i++) {
 close (COMP_NEW);
 
 ## Alignment operation in R
-my $command = "Rscript $Bin/R/simpleAlignment.r refRt.txt compRt.txt compRt_new.txt";
+my $command = "Rscript $Bin/R/simpleAlignment.R refRt.txt compRt.txt compRt_new.txt";
 system ($command);
 
 ## Update RTs to aligned ones
