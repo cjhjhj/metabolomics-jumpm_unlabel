@@ -62,7 +62,12 @@ for (my $i = 0; $i < scalar(@scoreFiles); $i++) {
 		}
 	}
 	close (SCORE);
-	print OUT2 $bestEntry, "\n";
+	## Sometimes, in spite of the existence of .out file, 
+	## DB-matched entry in .out file may not have structure information (SMILES)
+	## This entry in .out file needs to be skipped
+	if (defined $bestEntry) {
+		print OUT2 $bestEntry, "\n";
+	}	
 }
 close (OUT1);
 close (OUT2);
