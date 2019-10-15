@@ -309,7 +309,7 @@ if ($$params{'database_search'} == 1) {
 	my $nTotalJobs = int($nFiles / $filesPerJob - 0.0001) + 1;
 	my $nJobs = 0;
 	my $randNum = int(rand(100));
-	my %jobIDs = {};
+	my %jobIDs;
 	for (my $i = 0; $i < $nTotalJobs; $i++) {
 		$nJobs++;
 		my $jobName = "sch_m_$nJobs";
@@ -340,7 +340,7 @@ if ($$params{'database_search'} == 1) {
 	}
 	$nJobs = 0;
 	$randNum = int(rand(100));
-	%jobIDs = {};
+	%jobIDs = ();
 	for (my $i = 0; $i < $nTotalJobs; $i++) {
 		$nJobs++;
 		my $jobName = "score_m_$nJobs";
