@@ -43,7 +43,7 @@ sub get_running_jobs {
 		my @toks = split(/\s+/, $l);
 		## Sometimes, $toks[0] is a blank. In this case, shift the memory @toks (2019/10/15)
 		if ($toks[0] eq '') {
-			shirt @toks;
+			shift @toks;
 		}
 		if (defined($jobshash->{$toks[0]})) {
 			push (@retval, $toks[0]);
