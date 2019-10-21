@@ -352,7 +352,7 @@ if ($$params{'database_search'} == 1) {
 		}
 		my $job = $queue -> submit_job($ms2Path, $jobName, $command);
 		$jobIDs{$job} = 1;
-		print "\r  $nJobs database search jobs are submitted";
+		print "\r  $nJobs score calculation jobs are submitted";
 	}
 	print "\n  You submitted $nJobs jobs for database search\n";
 	checkJobStatus($nJobs, \%jobIDs, $queue);
