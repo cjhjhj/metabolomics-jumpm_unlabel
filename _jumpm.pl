@@ -436,7 +436,7 @@ if ($$params{'database_search'} == 1) {
 #######################################
 system ("cp $paramFile $alignDir");
 system ("mv alignment.params $alignDir");
-system ("mv featureToMS2.params $alignDir");
+system ("mv featureToMs2.params $alignDir");
 system ("mv $LOG JUMPm.log");
 system ("mv JUMPm.log $alignDir");
 
