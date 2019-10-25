@@ -7,16 +7,26 @@ use Getopt::Long;
 use FindBin qw($Bin);
 use lib "$Bin";
 
-my $paramFile;
-GetOptions('-p=s' => \$paramFile,);
+my ($paramFile, $queue, $mem);
+GetOptions('-p=s' => \$paramFile, '--queue=s'=>\$queue, '--mem=s'=>\$mem);
 if (!-e ($paramFile)) {
 	print "Please input the parameter file\n\n";
 	exit;
 }
 $paramFile = abs_path($paramFile);
 
-## Load R module first
-system ("module load R/3.5.1");
-#my $cmd = "bsub -P prot -q standard -R \"rusage[mem=100000]\" -Ip _jumpm.pl -p $paramFile" . join(" ", @ARGV);
-my $cmd = "bsub -P prot -q standard -R \"rusage[mem=100000]\" -Ip $Bin/testJumpm.pl -p $paramFile" . join(" ", @ARGV);
+if(!defined($queue) && !defined($mem)) {
+    $queue = 'standard';
+    $mem = 10000;
+}
+elsif(!defined($queue) && defined($mem)) {
+    print "\t--mem cannot be used without --queue\n";
+    exit(1);
+}
+elsif(!defined($mem)) {
+    $mem = 10000;
+}
+
+#my $cmd = "bsub -P prot -q $queue -R \"rusage[mem=$mem]\" -Ip _jumpm.pl -p $paramFile " . join(" ", @ARGV);
+my $cmd = "bsub -P prot -q $queue -R \"rusage[mem=$mem]\" -Ip $Bin/testJumpm.pl -p $paramFile " . join(" ", @ARGV);
 system($cmd);
