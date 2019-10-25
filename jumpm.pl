@@ -14,7 +14,6 @@ if (!-e ($paramFile)) {
 	exit;
 }
 $paramFile = abs_path($paramFile);
-
 if(!defined($queue) && !defined($mem)) {
     $queue = 'standard';
     $mem = 10000;
@@ -26,7 +25,5 @@ elsif(!defined($queue) && defined($mem)) {
 elsif(!defined($mem)) {
     $mem = 10000;
 }
-
-#my $cmd = "bsub -P prot -q $queue -R \"rusage[mem=$mem]\" -Ip _jumpm.pl -p $paramFile " . join(" ", @ARGV);
-my $cmd = "bsub -P prot -q $queue -R \"rusage[mem=$mem]\" -Ip $Bin/testJumpm.pl -p $paramFile " . join(" ", @ARGV);
+my $cmd = "bsub -P prot -q $queue -R \"rusage[mem=$mem]\" -Ip _jumpm.pl -p $paramFile " . join(" ", @ARGV);
 system($cmd);
