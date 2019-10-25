@@ -149,7 +149,7 @@ if ($$params{'skip_feature_detection'} == 0) {
 			my $command = "perl $Bin/featureDetection.pl $paramFile $mzXML $subDir";
 			my $job = $queue -> submit_job($dataDir, $jobName, $command);
 			$jobIDs{$job} = 1;
-			print "\r  $nJobs database search jobs are submitted";
+			print "\r  $nJobs feature detection job(s) is/are submitted";
 			my $featureFile = $subDir . "\.feature";
 			push (@featureFileArray, $featureFile);
 		}
@@ -329,7 +329,7 @@ if ($$params{'database_search'} == 1) {
 	}
 	print "\n  You submitted $nJobs jobs for database search\n";
 	checkJobStatus($nJobs, \%jobIDs, $queue);
-	print "\n";
+	print "\n\n";
 	
 	######################################################
 	## Calculation of scores for identified metabolites ##
@@ -430,6 +430,16 @@ if ($$params{'database_search'} == 1) {
 	print "  Database search is skipped according to the parameter\n";
 	print $LOG "  Database search is skipped according to the parameter\n";	
 }
+
+#######################################
+## Copy parameter files and LOG file ##
+#######################################
+system ("cp $paramFile $alignDir");
+system ("mv alignment.params $alignDir");
+system ("mv featureToMS2.params $alignDir");
+system ("mv $LOG JUMPm.log");
+system ("mv JUMPm.log $alignDir");
+
 print "\n  Jump -m for unlabeled data is finished\n";
 
 #################
