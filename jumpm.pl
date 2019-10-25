@@ -25,5 +25,5 @@ elsif(!defined($queue) && defined($mem)) {
 elsif(!defined($mem)) {
     $mem = 10000;
 }
-my $cmd = "bsub -P prot -q $queue -R \"rusage[mem=$mem]\" -Ip _jumpm.pl -p $paramFile " . join(" ", @ARGV);
+my $cmd = "bsub -P prot -q $queue -R \"rusage[mem=$mem]\" -Ip $Bin/_jumpm.pl -p $paramFile " . join(" ", @ARGV);
 system($cmd);
