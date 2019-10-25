@@ -15,8 +15,8 @@ database = HMDB,YMDB   # database type: PUBCHEM, YMDB, HMDB (use "," to combine 
 library = /home/jcho/dev/JUMPm/Metabolome_library_v0.1.4.txt        # path of .txt file containing library compound information                       
 output_name = test     # Used for unlabeled data analysis. Prefix "align_" will be automatically added
 
-mass_formula_database = /home/xwang4/JUMPm_database/MASS_FORMULA_DB      # mass formula database   
-structure_database = /home/xwang4/JUMPm_database/STRUCTURE_DB            # structure database
+mass_formula_database = /home/jcho/dev/JUMPm_database/MASS_FORMULA_DB      # mass formula database   
+structure_database = /home/jcho/dev/JUMPm_database/STRUCTURE_DB            # structure database
 formula_mass_tolerance_searching = 10    # mass tolerance for searching formula (ppm)
 
 ####################################
@@ -95,7 +95,7 @@ matched_scan_dist = 500          # scan number between MS2 and MS1 containing MS
 ## Parameters for cluster system ##
 ###################################
 cluster = 1                      # 1 = cluster; 0 = single server
-job_management_system = SGE      # other systems (e.g. LSF & PBS) may be used
+job_management_system = LSF      # other systems (e.g. LSF & PBS) may be used
 
 ###############################
 ## Adducts for positive mode ##
