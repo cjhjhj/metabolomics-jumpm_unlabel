@@ -17,6 +17,6 @@ $paramFile = abs_path($paramFile);
 
 ## Load R module first
 system ("module load R/3.5.1");
-#my $cmd = "bsub -P prot -q standard -R \"rusage[mem=100000]\" -Ip _jumpm.pl -p " . join(" ", @ARGV);
-my $cmd = "bsub -P prot -q standard -R \"rusage[mem=100000]\" -Ip $Bin/testJumpm.pl -p " . join(" ", @ARGV);
+#my $cmd = "bsub -P prot -q standard -R \"rusage[mem=100000]\" -Ip _jumpm.pl -p $paramFile" . join(" ", @ARGV);
+my $cmd = "bsub -P prot -q standard -R \"rusage[mem=100000]\" -Ip $Bin/testJumpm.pl -p $paramFile" . join(" ", @ARGV);
 system($cmd);
