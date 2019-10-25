@@ -154,7 +154,7 @@ if ($$params{'skip_feature_detection'} == 0) {
 			push (@featureFileArray, $featureFile);
 		}
 	}
-	print "\n  You submitted $nJobs jobs for database search\n";
+	print "\n  You submitted $nJobs jobs for feature detection\n";
 	checkJobStatus($nJobs, \%jobIDs, $queue);
 } elsif ($$params{'skip_feature_detection'} == 1) {
 	print "  Feature detection step is skipped\n";
