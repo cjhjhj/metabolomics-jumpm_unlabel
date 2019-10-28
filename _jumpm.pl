@@ -285,7 +285,7 @@ print $LOG "\n";
 ##================##
 if ($$params{'library_search'} == 1) {
 	$command = "perl $Bin/librarySearch.pl $paramFile $fullyAlignedFeatureFile $ms2Path\n";
-	system ($command);	
+	system ($command);		
 } else {
 	print "  Libraray search is skipped according to the parameter\n";
 	print $LOG "  Libraray search is skipped according to the parameter\n";
@@ -438,6 +438,7 @@ system ("cp $paramFile $alignDir");
 system ("mv alignment.params $alignDir");
 system ("mv featureToMs2.params $alignDir");
 system ("cp $tmpLog $alignDir/JUMPm.log");
+system ("rm $tmpLog");
 
 print "\n  Jump -m for unlabeled data is finished\n";
 

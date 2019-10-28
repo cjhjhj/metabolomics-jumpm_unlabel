@@ -244,7 +244,8 @@ while (<RES>) {
 }
 close (RES);
 
-open (OUTPUT, ">", "libSearchResult.txt");
+my $outputFile = $ms2Path . ".library_matches";
+open (OUTPUT, ">", $outputFile);
 print OUTPUT "No\tFeature_Index\tFeature_m\/z\tFeature_RT(original)\tFeature_RT(aligned)\tFeature_Intensity\t" . 
 			"Formula\tName\tSMILES\tInChiKey\tRT_shift\tMS2_similarity\tScore\n";
 my $index = 1;
@@ -276,6 +277,10 @@ foreach my $key1 (keys %res) {
 	}
 }
 close (OUTPUT);
+
+## File handling
+system ("rm alignment_residual.txt calculated_rt_pvalue.txt measured_rt_error.txt");
+
 
 #################
 ## Subroutines ##
