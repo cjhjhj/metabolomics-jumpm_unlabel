@@ -129,6 +129,7 @@ while (<FEATURE>) {
 	$i++;	
 }
 close (FEATURE);
+print "\n";
 
 ##################
 ## RT alignment ##

@@ -149,18 +149,18 @@ if ($$params{'skip_feature_detection'} == 0) {
 			my $command = "perl $Bin/featureDetection.pl $paramFile $mzXML $subDir";
 			my $job = $queue -> submit_job($dataDir, $jobName, $command);
 			$jobIDs{$job} = 1;
-			print "\r  $nJobs feature detection job(s) is/are submitted";
+			print "\r    $nJobs feature detection job(s) is/are submitted";
 			my $featureFile = $subDir . "\.feature";
 			push (@featureFileArray, $featureFile);
 		}
 	}
-	print "\n  You submitted $nJobs jobs for feature detection\n";
+	print "\n    You submitted $nJobs job(s) for feature detection\n";
 	checkJobStatus($nJobs, \%jobIDs, $queue);
 } elsif ($$params{'skip_feature_detection'} == 1) {
 	print "  Feature detection step is skipped\n";
-	print "  The following feature files are used\n";
+	print "  The following feature file(s) is/are used\n";
 	print $LOG "  Feature detection step is skipped\n";
-	print $LOG "  The following feature files are used\n";
+	print $LOG "  The following feature file(s) is/are used\n";
 	## Skip feature detection
 	@featureFileArray = @{$$params{'feature_files'}};
 	foreach my $featureFile (sort {$a cmp $b} @featureFileArray) {
