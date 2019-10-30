@@ -12,6 +12,8 @@ use Statistics::Lite qw(mean median);
 ####################
 ## Initialization ##
 ####################
+print "  Library search for the identification of metabolites\n";
+print "  ====================================================\n\n";
 my ($paramFile, $featFile, $ms2Path) = @ARGV;
 my %params = getParams($paramFile);
 my $H = 1.007276466812;
@@ -23,7 +25,7 @@ my $matchRtTol = 10;  ## Unit of second
 ###########################
 ## Column names are determined based on 
 ## type of LC column (C4, C8, C18 or HILIC) and mode (pos or neg),
-print "Loading a library\n";
+print "    Loading library entries\n";
 my $columnInfo = lc($params{'LC_column'});
 if ($params{'mode'} == -1) {
 	$columnInfo .= "n";
@@ -68,7 +70,7 @@ while (<LIB>) {
 	}
 	$libInfo[$i]{"$columnInfo" . "_mz"} = $mz;
 	$i++;
-	print "\rParsing #$i entries in the library";
+	print "\r    Parsing #$i entries in the library";
 }
 close (LIB);
 print "\n";
@@ -77,7 +79,7 @@ print "\n";
 ## Read feature information ##
 ##############################
 ## Note that the header of .MS2 file contains (M+H)+ or (M-H)-, and charge state
-print "\nLoading feature information\n";
+print "\n    Loading feature information\n";
 my @featInfo;
 open (FEATURE, "<", $featFile) or die "Cannot open $featFile\n";
 $header = <FEATURE>;
@@ -87,7 +89,7 @@ my @colIntensity = indexes {$_ =~ /_Intensity/} @headerElems;
 my @colZ = indexes {$_ =~ /_z$/} @headerElems;
 $i = 1;
 while (<FEATURE>) {
-	print "\rParsing #$i features";
+	print "\r    Parsing #$i features";
 	chomp ($_);
 	my @elems = split(/\t/, $_);
 	@{$featInfo[$i]}{@headerElems} = @elems;
@@ -280,7 +282,7 @@ close (OUTPUT);
 
 ## File handling
 system ("rm alignment_residual.txt calculated_rt_pvalue.txt measured_rt_error.txt");
-
+print "  Library search is finished\n";
 
 #################
 ## Subroutines ##

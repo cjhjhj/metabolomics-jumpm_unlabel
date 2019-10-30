@@ -283,9 +283,9 @@ print $LOG "\n";
 ##================##
 ## Library search ##
 ##================##
-if ($$params{'library_search'} == 1) {
+if ($$params{'library_search'} == 1) {	
 	$command = "perl $Bin/librarySearch.pl $paramFile $fullyAlignedFeatureFile $ms2Path\n";
-	system ($command);		
+	system ($command);
 } else {
 	print "  Libraray search is skipped according to the parameter\n";
 	print $LOG "  Libraray search is skipped according to the parameter\n";
@@ -300,6 +300,8 @@ if ($$params{'database_search'} == 1) {
 	#########################################################################
 	## Database search to identify metabolites using individual .MS2 files ##
 	#########################################################################
+	print "  Database search for the identification of metabolites\n";
+	print "  =====================================================\n\n";
 	my @ms2FileArray = glob("$ms2Path/*.MS2");
 	my $nFiles = scalar(@ms2FileArray);
 	my $maxJobs = 200;
@@ -325,9 +327,9 @@ if ($$params{'database_search'} == 1) {
 		}
 		my $job = $queue -> submit_job($ms2Path, $jobName, $command);
 		$jobIDs{$job} = 1;
-		print "\r  $nJobs database search jobs are submitted";
+		print "\r    $nJobs database search jobs are submitted";
 	}
-	print "\n  You submitted $nJobs jobs for database search\n";
+	print "\n    You submitted $nJobs jobs for database search\n";
 	checkJobStatus($nJobs, \%jobIDs, $queue);
 	print "\n\n";
 	
@@ -357,9 +359,9 @@ if ($$params{'database_search'} == 1) {
 		}
 		my $job = $queue -> submit_job($ms2Path, $jobName, $command);
 		$jobIDs{$job} = 1;
-		print "\r  $nJobs score calculation jobs are submitted";
+		print "\r    $nJobs score calculation jobs are submitted";
 	}
-	print "\n  You submitted $nJobs jobs for database search\n";
+	print "\n    You submitted $nJobs jobs for database search\n";
 	checkJobStatus($nJobs, \%jobIDs, $queue);
 	print "\n";
 	
@@ -440,7 +442,7 @@ system ("mv featureToMs2.params $alignDir");
 system ("cp $tmpLog $alignDir/JUMPm.log");
 system ("rm $tmpLog");
 
-print "\n  Jump -m for unlabeled data is finished\n";
+print "\n  Jump -m for unlabeled data is finished\n\n";
 
 #################
 ## Subroutines ##
@@ -463,18 +465,18 @@ sub checkJobStatus {
 			}
 			if (@jobIDsInQueue) { # i.e. There are jobs of interest in the queue
 				$nFinishedJobs = $nJobs - scalar(@jobIDsInQueue);
-				print "\r  $nFinishedJobs jobs are finished";
+				print "\r    $nFinishedJobs jobs are finished";
 				if ($nFinishedJobs == $nJobs) {
 					$jobInfo = 0;
 				} else {
 					$jobInfo = 1;
 				}
 			} else {        # i.e. There are jobs in the queue, but all jobs of interest are finished
-				print "\r  $nJobs jobs are finished";
+				print "\r    $nJobs jobs are finished";
 				$jobInfo = 0;
 			}
 		} else {        # i.e. There's no job in the queue
-			print "\r  $nJobs jobs are finished";
+			print "\r    $nJobs jobs are finished";
 			$jobInfo = 0;
 		}
 		sleep(5);

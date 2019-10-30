@@ -13,68 +13,67 @@ use Statistics::Lite qw(mean median);
 ## Parameter loading and initialization ##
 ##########################################
 #my $paramFile = @ARGV;
-my $paramFile = "jumpm_new.params";
+my $paramFile = "../IROA_HILIC_NEG_Target/jumpm_negative.params";
 my %params = getParams($paramFile);
 my $H = 1.007276466812;
 my $matchMzTol = 10;  ## Unit of ppm
 my $matchRtTol = 10;  ## Unit of second
 
-###########################
-## Read library entities ##
-###########################
-## Column names are determined based on 
-## type of LC column (C4, C8, C18 or HILIC) and mode (pos or neg),
-print "Loading a library\n";
-my $columnInfo = lc($params{'LC_column'});
-if ($params{'mode'} == -1) {
-	$columnInfo .= "n";
-} elsif ($params{'mode'} == 1) {
-	$columnInfo .= "p";
-}
-my @libInfo;
-my $libFile = $params{'library'};
-open (LIB, "<", $libFile) or die "Cannot open $libFile\n";
-my $header = <LIB>;
-my @headerElems = split(/\t/, $header);
-my $i = 0;
-while (<LIB>) {
-	chomp($_);
-	my @elems = split(/\t/, $_);
-	@{$libInfo[$i]}{@headerElems} = @elems;
+############################
+### Read library entities ##
+############################
+### Column names are determined based on 
+### type of LC column (C4, C8, C18 or HILIC) and mode (pos or neg),
+#print "Loading a library\n";
+#my $columnInfo = lc($params{'LC_column'});
+#if ($params{'mode'} == -1) {
+#	$columnInfo .= "n";
+#} elsif ($params{'mode'} == 1) {
+#	$columnInfo .= "p";
+#}
+#my @libInfo;
+#my $libFile = $params{'library'};
+#open (LIB, "<", $libFile) or die "Cannot open $libFile\n";
+#my $header = <LIB>;
+#my @headerElems = split(/\t/, $header);
+#my $i = 0;
+#while (<LIB>) {
+#	chomp($_);
+#	my @elems = split(/\t/, $_);
+#	@{$libInfo[$i]}{@headerElems} = @elems;
+#
+#	## Open .MS2 file and calculate m/z of the library feature
+#	my $ms2File = $libInfo[$i]{"$columnInfo" . "_linkms2"};
+#	open (MS2, "<", $ms2File) or die "Cannot open $ms2File\n";
+#	my $header = <MS2>;
+#	while (<MS2>) {
+#		chomp ($_);
+#		my ($mz, $int) = split(/\t/, $_);
+#		push (@{$libInfo[$i]{"$columnInfo" . "_ms2"}{'mz'}}, $mz);
+#		push (@{$libInfo[$i]{"$columnInfo" . "_ms2"}{'int'}}, $int);
+#	}
+#	close (MS2);
+#	chomp($header);
+#	my ($MH, $charge) = split(/\t/, $header);	## Note that .MS2 file has M+H (or M-H) 
+#
+#	## Check the charge state
+#	if ($libInfo[$i]{"$columnInfo" . "_charge"} > 0 && $libInfo[$i]{"$columnInfo" . "_charge"} != $charge) {
+#		die "Charge state of the $i-th library entry\n";
+#	}
+#
+#	my $mz;
+#	if ($params{'mode'} == 1) {
+#		$mz =(($MH - $H) + $charge * $H) / $charge;
+#	} elsif ($params{'mode'} == -1) {
+#		$mz = (($MH + $H) - $charge * $H) / $charge;
+#	}
+#	$libInfo[$i]{"$columnInfo" . "_mz"} = $mz;
+#	$i++;
+#	print "\rParsing #$i entries in the library";
+#}
+#close (LIB);
+#print "\n";
 
-	## Open .MS2 file and calculate m/z of the library feature
-	my $ms2File = $libInfo[$i]{"$columnInfo" . "_linkms2"};
-	open (MS2, "<", $ms2File) or die "Cannot open $ms2File\n";
-	my $header = <MS2>;
-	while (<MS2>) {
-		chomp ($_);
-		my ($mz, $int) = split(/\t/, $_);
-		push (@{$libInfo[$i]{"$columnInfo" . "_ms2"}{'mz'}}, $mz);
-		push (@{$libInfo[$i]{"$columnInfo" . "_ms2"}{'int'}}, $int);
-	}
-	close (MS2);
-	chomp($header);
-	my ($MH, $charge) = split(/\t/, $header);	## Note that .MS2 file has M+H (or M-H) 
-
-	## Check the charge state
-	if ($libInfo[$i]{"$columnInfo" . "_charge"} > 0 && $libInfo[$i]{"$columnInfo" . "_charge"} != $charge) {
-		die "Charge state of the $i-th library entry\n";
-	}
-
-	my $mz;
-	if ($params{'mode'} == 1) {
-		$mz =(($MH - $H) + $charge * $H) / $charge;
-	} elsif ($params{'mode'} == -1) {
-		$mz = (($MH + $H) - $charge * $H) / $charge;
-	}
-	$libInfo[$i]{"$columnInfo" . "_mz"} = $mz;
-	$i++;
-	print "\rParsing #$i entries in the library";
-}
-close (LIB);
-print "\n";
-
-=head
 ###########################
 ## Read library entities ##
 ###########################
@@ -105,7 +104,7 @@ while (<LIB>) {
 	@{$libInfo[$i]}{@headerElems} = @elems;
 
 	## Open .MS2 file and calculate m/z of the library feature
-	my $ms2File = $libMS2Path . $libInfo[$i]{"$columnInfo" . "_linkms2"};
+	my $ms2File = $libMS2Path . basename($libInfo[$i]{"$columnInfo" . "_linkms2"});
 	open (MS2, "<", $ms2File) or die "Cannot open $ms2File\n";
 	my $header = <MS2>;
 	while (<MS2>) {
@@ -131,11 +130,10 @@ while (<LIB>) {
 	}
 	$libInfo[$i]{"$columnInfo" . "_mz"} = $mz;
 	$i++;
-	print "\rParsing #$i entries in the library";
+	print "#$i\tmz = $mz\tcharge = $charge\n";
 }
 close (LIB);
 print "\n";
-=cut
 
 ##############################
 ## Read feature information ##
@@ -143,8 +141,8 @@ print "\n";
 ## Note that the header of .MS2 file contains (M+H)+ or (M-H)-, and charge state
 print "\nLoading feature information\n";
 my @featInfo;
-my $featFile = "./IROAsamples/test_IROA_IS_NEG_1.1.feature"; 
-my $ms2Path = "./IROAsamples/MS2";
+my $featFile = "/Research/Projects/7Metabolomics/IROA_HILIC_NEG_Target/test_fully_aligned.feature"; 
+my $ms2Path = "/Research/Projects/7Metabolomics/IROA_HILIC_NEG_Target/MS2/";
 open (FEATURE, "<", $featFile) or die "Cannot open $featFile\n";
 $header = <FEATURE>;
 @headerElems = split(/\t/, $header);
@@ -213,13 +211,15 @@ for (my $i = 0; $i < scalar(@libInfo); $i++) {
 		my $compZ = $featInfo[$j]{'charge'};
 		my $mzDiff = abs($refMz - $compMz) / $refMz * 1e6;
 		if ($refZ == 0) {
-			if ($mzDiff < $matchMzTol && defined($compZ) && $compInt >= $compMaxInt) {
+#			if ($mzDiff < $matchMzTol && defined($compZ) && $compInt >= $compMaxInt) {
+			if ($mzDiff < $matchMzTol && $compInt >= $compMaxInt) {
 				$compRt = $featInfo[$j]{'meanRt'};
 				$compInd = $j;
 				$compMaxInt = $compInt;
 			}
 		} else {
-			if ($mzDiff < $matchMzTol && defined($compZ) && $refZ == $compZ && $compInt >= $compMaxInt) {
+#			if ($mzDiff < $matchMzTol && defined($compZ) && $refZ == $compZ && $compInt >= $compMaxInt) {
+			if ($mzDiff < $matchMzTol && $compInt >= $compMaxInt) {
 				$compRt = $featInfo[$j]{'meanRt'};
 				$compInd = $j;
 				$compMaxInt = $compInt;
