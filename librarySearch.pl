@@ -250,7 +250,7 @@ close (RES);
 my $outputFile = $ms2Path . ".library_matches";
 open (OUTPUT, ">", $outputFile);
 print OUTPUT "No\tFeature_Index\tFeature_m\/z\tFeature_RT(original)\tFeature_RT(aligned)\tFeature_Intensity\t" . 
-			"Formula\tName\tSMILES\tInChiKey\tRT_shift\tMS2_similarity\tScore\n";
+			"StjudeID\tKEGGID\tFormula\tName\tSMILES\tInChiKey\tRT_shift\tMS2_similarity\tScore\n";
 my $index = 1;
 foreach my $key1 (keys %res) {
 	foreach my $key2 (keys %{$res{$key1}}) {
@@ -260,6 +260,8 @@ foreach my $key1 (keys %res) {
 		my $featOrigRt = $featInfo[$key1]{'meanRt'};
 		my $featAlignedRt = $featInfo[$key1]{'meanRtNew'};
 		my $featIntensity = $featInfo[$key1]{'meanIntensity'};
+		my $libStjudeId = $libInfo[$key2]{'idstjude'};
+		my $libKEGGId = $libInfo[$key2]{'idkegg'};
 		my $libFormula = $libInfo[$key2]{'formula'};
 		my $libName = $libInfo[$key2]{'name'};
 		my $libSmiles = $libInfo[$key2]{'SMILES'};
@@ -275,7 +277,7 @@ foreach my $key1 (keys %res) {
 			$simP = $minP / 10;
 		}
 		my $score = -2 * (log($rtP) + log($simP));	## Fisher's method for combining p-values
-		print OUTPUT "$index\t$key1\t$featMz\t$featOrigRt\t$featAlignedRt\t$featIntensity\t$libFormula\t$libName\t$libSmiles\t$libInChI\t$rtErr\t$sim\t$score\n";
+		print OUTPUT "$index\t$key1\t$featMz\t$featOrigRt\t$featAlignedRt\t$featIntensity\t$libStjudeId\t$libKEGGId\t$libFormula\t$libName\t$libSmiles\t$libInChI\t$rtErr\t$sim\t$score\n";
 		$index++;
 	}
 }
