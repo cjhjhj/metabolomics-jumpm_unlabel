@@ -367,6 +367,9 @@ if (length(files) > 1) {
     colnames(fullFeatures) = paste0(filename, "_", colnames(fullFeatures))
     fullFeatures = cbind(meanMz, fullFeatures)
     outputFile = paste0(outDirectory, "/", params$output_name, "_fully_aligned.feature")
+    nFeatures = dim(fullFeatures)[1]
+    cat(" ", nFeatures, "features are detected\n")
+    cat(" ", nFeatures, "features are detected\n", file = LOG)
     write.table(fullFeatures, outputFile, sep = "\t", row.names = F, quote = F)
 }
 
