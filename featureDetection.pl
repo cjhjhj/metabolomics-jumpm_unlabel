@@ -900,8 +900,8 @@ sub makeFeatureTable {
 	my $featureFile = $tmpFeatureFile;
 	$featureFile =~ s/\.tmp\.feature/\.feature/;
 	open (FEATURE, ">", $featureFile);
-	print FEATURE "index", "\t", "m\/z", "\t", "z", "\t", "MS1 scan#", "\t", "RT", "\t", 
-					"min RT", "\t", "max RT", "\t", "Intensity", "\t", "S\/N", "\t", "Percentage of TF", "\n";
+	print FEATURE "index", "\t", "m\/z", "\t", "z", "\t", "MS1scan#", "\t", "minMS1Scan#", "\t", "maxMS1Scan#", "\t", 
+					"RT", "\t", "minRT", "\t", "maxRT", "\t", "Intensity", "\t", "S\/N", "\t", "Percentage of TF", "\n";
 	my $index = 0;
 	foreach my $scan (sort {$a <=> $b} keys %hash) {
 		foreach my $intensity (sort {$b <=> $a} keys %{$hash{$scan}}) {
@@ -911,12 +911,12 @@ sub makeFeatureTable {
 				my ($SN, $minRT, $maxRT, $pctTruePeaks) = ($data[4], $data[6], $data[7], $data[8]);
 				$index++;
 				if (defined($charge{$scan}{$mz})) {
-					print FEATURE $index, "\t", sprintf("%.12f", $mz), "\t", $charge{$scan}{$mz}, "\t", $scan, "\t",
-									sprintf("%.1f", $scan2RT{$scan}), "\t", $RT2scan{$minRT}, "\t", $RT2scan{$maxRT}, "\t",
+					print FEATURE $index, "\t", sprintf("%.12f", $mz), "\t", $charge{$scan}{$mz}, "\t", $scan, "\t", $RT2scan{$minRT}, "\t", $RT2scan{$maxRT}, "\t",
+									sprintf("%.2f", $scan2RT{$scan}), "\t", $minRT, "\t", $maxRT, "\t",
 									sprintf("%.0f", $intensity), "\t", sprintf("%.1f", $SN), "\t", sprintf("%.4f", $pctTruePeaks), "\n";
 				} else {
-					print FEATURE $index, "\t", sprintf("%.12f", $mz), "\t", "0", "\t", $scan, "\t",
-									sprintf("%.1f", $scan2RT{$scan}), "\t", $RT2scan{$minRT}, "\t", $RT2scan{$maxRT}, "\t",
+					print FEATURE $index, "\t", sprintf("%.12f", $mz), "\t", "0", "\t", $scan, "\t", "\t", $RT2scan{$minRT}, "\t", $RT2scan{$maxRT}, "\t",
+									sprintf("%.2f", $scan2RT{$scan}), "\t", $minRT, "\t", $maxRT, "\t",
 									sprintf("%.0f", $intensity), "\t", sprintf("%.1f", $SN), "\t", sprintf("%.4f", $pctTruePeaks), "\n";
 				}
 			}
