@@ -18,6 +18,8 @@ parseParams = function (paramFile) {
         }
         if (key == "output_name") {
             params$output_name = as.character(val)
+        } else if (key == "mode") {
+            params$mode = as.numeric(val)
         } else if (key == "tol_initial") {
             params$initMzTol = as.numeric(val)
         } else if (key == "sd_width") {
@@ -75,16 +77,39 @@ parseParams = function (paramFile) {
 ############################
 ## Parse input arguments  ##
 ############################
-startTime = Sys.time()
-args = commandArgs(trailingOnly = TRUE)
-paramFile = args[1]
-filenames = args[2]
-logFile = args[3]
-LOG = file(logFile, "a")
-srcDirectory = args[4]
-outDirectory = args[5]
+# startTime = Sys.time()
+# args = commandArgs(trailingOnly = TRUE)
+# paramFile = args[1]
+# filenames = args[2]
+# logFile = args[3]
+# LOG = file(logFile, "a")
+# srcDirectory = args[4]
+# outDirectory = args[5]
+# params = parseParams(paramFile)
+# files = unlist(strsplit(filenames, ","))
+
+
+paramFile = "../jumpm_negative.params"
+filenames = "../IROAsamples/IROA_IS_NEG_1.1.feature,../IROAsamples/IROA_IS_NEG_2.1.feature,../IROAsamples/IROA_IS_NEG_3.1.feature"
+srcDirectory = "U:/Research/Projects/7Metabolomics/JUMPm"
+outDirectory = "."
+logFile = "tmplog"
+LOG = file(logFile, 'a')
 params = parseParams(paramFile)
 files = unlist(strsplit(filenames, ","))
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #############################################
 ## Read feature files generated from JUMPm ##
@@ -335,9 +360,42 @@ if (length(files) > 1) {
     ############################
     ## Write output to files  ##
     ############################
-    ## Fully-matched features
+    ## New fully-matched features (formatting according to the discussion on 2019/11/19)
     fullFeatures = res$fullFeatures
-    meanMz = apply(fullFeatures[, grep("mz", colnames(fullFeatures))], 1, mean, na.rm = T)
+    fMz = round(apply(fullFeatures[, grep("mz", colnames(fullFeatures))], 1, mean, na.rm = T), 5) # Feature m/z (averaged over runs)
+    fIon = NULL
+    for (i in 1:dim(fullFeatures)[1]) {
+        ## Determination of the charge state
+        ##   Heuristic rules
+        ##   1. Prefer the charge state other than 0
+        ##   2. When multiple charge states have the same frequency over samples, choose the lower one
+        charges = fullFeatures[i, grep("_z", colnames(fullFeatures))]
+        charges = charges[!is.na(charges)]
+        charges = setdiff(as.numeric(charges), 0)
+        if (length(charges) == 0) {
+            charge = 1
+        } else {
+            temp = table(as.numeric(charges))
+            charge = as.numeric(names(temp)[temp == max(temp)])
+            if (length(charge) > 1) {
+                charge = charge[1]
+            }
+        }
+        if (params$mode == -1) {
+            fIon[i] = paste0("[M-", charge, "H]", charge, "-")
+        } else {
+            fIon[i] = paste0("[M+", charge, "H]", charge, "+")
+        }
+    }
+    refColName = sub(".\\d.feature", "", basename(files[refNo]))
+    fRT = round(fullFeatures[, which(colnames(fullFeatures) == paste0(refColName, "_RT"))] / 60, 2) # Feature RT (from reference run), unit of minute, 2 decimal
+    fMaxRT = fullFeatures[, which(colnames(fullFeatures) == paste0(refColName, "_maxRT"))] # Feature max RT (from reference run)
+    fMinRT = fullFeatures[, which(colnames(fullFeatures) == paste0(refColName, "_minRT"))] # Feature min RT (from reference run)
+    fWidth = round((fMaxRT - fMinRT) / 60, 2) # Feature width (maxRT - minRT of feature), unit of minute, 2 decimal
+    fSNratio = fullFeatures[, which(colnames(fullFeatures) == paste0(refColName, "_SN"))] # Feature S/N ratio (from reference run)
+    fIntensities = fullFeatures[, grep("Intensity", colnames(fullFeatures))]
+
+    ## Old fully-matched features
     fullFeatures = cbind(meanMz, fullFeatures)
     outputFile = paste0(outDirectory, "/", params$output_name, "_fully_aligned.feature")
     write.table(fullFeatures, outputFile, sep = "\t", row.names = F, quote = F)
