@@ -304,7 +304,7 @@ for (my $i = 0; $i < scalar(@fileArray); $i++) {
 my $mzXMLs = join(",", @tmpArray);
 my ($ms2Path) = $subDir =~ /(\.\d+$)/;
 $ms2Path = abs_path($alignDir) . "/align_" . $$params{'output_name'} . $ms2Path;
-$command = "Rscript $Bin/R/featureToMs2.R $paramFile $mzXMLs $ms2Path $tmpLog";
+$command = "Rscript $Bin/R/featureToMs2.R $paramFile $fullyAlignedFeatureFile $mzXMLs $ms2Path $tmpLog";
 system ($command);
 
 ##================##

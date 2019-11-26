@@ -117,9 +117,10 @@ ms2Consolidation = function(input, tol, type) {
 startTime = Sys.time()
 args = commandArgs(T)
 paramFile = args[1]
-mzXMLs = unlist(strsplit(args[2], ","))
-outDirectory = args[3]
-logFile = args[4]
+featureFile = args[2]
+mzXMLs = unlist(strsplit(args[3], ","))
+outDirectory = args[4]
+logFile = args[5]
 LOG = file(logFile, "a")
 params = parseParams(paramFile)
 cat("\n  Identification and consolidation of MS2 spectra for the features\n")
@@ -130,7 +131,6 @@ cat("  ================================================================\n\n", fi
 ## Parameters
 ppiThreshold = "max" ## Hard-coded
 pctTfThreshold = 50 ## Hard-coded
-featureFile = params$featureFile
 tolIsolation = params$tolIsolation
 tolPrecursor = params$tolPrecursor
 tolIntraMs2Consolidation = params$tolIntraMs2Consolidation
