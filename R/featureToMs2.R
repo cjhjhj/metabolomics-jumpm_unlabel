@@ -13,9 +13,6 @@ parseParams = function (paramFile) {
         lines[i] = gsub("\\s", "", lines[i])
         if (grepl("^#", lines[i]) | lines[i] == "") {
             next
-        } else if (!grepl("=", lines[i]) & grepl("mzXML", lines[i])) {
-            params$mzXMLs = c(params$mzXMLs, as.character(lines[i]))
-            next
         } else {
             line_i = gsub("#.*", "", lines[i])
             key = unlist(strsplit(line_i, "="))[1]
@@ -120,8 +117,9 @@ ms2Consolidation = function(input, tol, type) {
 startTime = Sys.time()
 args = commandArgs(T)
 paramFile = args[1]
-outDirectory = args[2]
-logFile = args[3]
+mzXMLs = unlist(strsplit(args[2], ","))
+outDirectory = args[3]
+logFile = args[4]
 LOG = file(logFile, "a")
 params = parseParams(paramFile)
 cat("\n  Identification and consolidation of MS2 spectra for the features\n")
@@ -133,7 +131,6 @@ cat("  ================================================================\n\n", fi
 ppiThreshold = "max" ## Hard-coded
 pctTfThreshold = 50 ## Hard-coded
 featureFile = params$featureFile
-mzXMLs = params$mzXMLs
 tolIsolation = params$tolIsolation
 tolPrecursor = params$tolPrecursor
 tolIntraMs2Consolidation = params$tolIntraMs2Consolidation

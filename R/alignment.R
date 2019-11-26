@@ -91,6 +91,7 @@ parseParams = function (paramFile) {
 
 paramFile = "../jumpm_negative.params"
 filenames = "../IROAsamples/IROA_IS_NEG_1.1.feature,../IROAsamples/IROA_IS_NEG_2.1.feature,../IROAsamples/IROA_IS_NEG_3.1.feature"
+# filenames = "../IROAsamples/old/IROA_IS_NEG_1.1.feature,../IROAsamples/old/IROA_IS_NEG_2.1.feature,../IROAsamples/old/IROA_IS_NEG_3.1.feature"
 srcDirectory = "U:/Research/Projects/7Metabolomics/JUMPm"
 outDirectory = "."
 logFile = "tmplog"
@@ -362,6 +363,7 @@ if (length(files) > 1) {
     ############################
     ## New fully-matched features (formatting according to the discussion on 2019/11/19)
     fullFeatures = res$fullFeatures
+    fNum = c(1:dim(fullFeatures)[1])
     fMz = round(apply(fullFeatures[, grep("mz", colnames(fullFeatures))], 1, mean, na.rm = T), 5) # Feature m/z (averaged over runs)
     fIon = NULL
     for (i in 1:dim(fullFeatures)[1]) {
@@ -394,10 +396,16 @@ if (length(files) > 1) {
     fWidth = round((fMaxRT - fMinRT) / 60, 2) # Feature width (maxRT - minRT of feature), unit of minute, 2 decimal
     fSNratio = fullFeatures[, which(colnames(fullFeatures) == paste0(refColName, "_SN"))] # Feature S/N ratio (from reference run)
     fIntensities = fullFeatures[, grep("Intensity", colnames(fullFeatures))]
-
+    outDf = cbind("Feature_ion" = fIon, "Feature_m/z" = fMz, "Feature_RT"= fRT, "Feature_width" = fWidth, "Feature_SNratio" = fSNratio, fIntensities)
+    outDf = outDf[order(outDf$`Feature_m/z`), ]
+    fNum = c(1:dim(outDf)[1])
+    outDf = cbind("Feature_num" = fNum, outDf)
+    outputFile = paste0(outDirectory, "/", params$output_name, "_fully_aligned.feature")
+    write.table(outDf, outputFile, sep = "\t", row.names = F, quote = F)
+    
     ## Old fully-matched features
     fullFeatures = cbind(meanMz, fullFeatures)
-    outputFile = paste0(outDirectory, "/", params$output_name, "_fully_aligned.feature")
+    outputFile = paste0(outDirectory, "/.", params$output_name, "_fully_aligned.feature") ## Hidden by adding "." (dot) to the file name
     write.table(fullFeatures, outputFile, sep = "\t", row.names = F, quote = F)
     
     ## Partially-matched features

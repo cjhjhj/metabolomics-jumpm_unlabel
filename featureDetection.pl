@@ -915,7 +915,7 @@ sub makeFeatureTable {
 									sprintf("%.2f", $scan2RT{$scan}), "\t", $minRT, "\t", $maxRT, "\t",
 									sprintf("%.0f", $intensity), "\t", sprintf("%.1f", $SN), "\t", sprintf("%.4f", $pctTruePeaks), "\n";
 				} else {
-					print FEATURE $index, "\t", sprintf("%.12f", $mz), "\t", "0", "\t", $scan, "\t", "\t", $RT2scan{$minRT}, "\t", $RT2scan{$maxRT}, "\t",
+					print FEATURE $index, "\t", sprintf("%.12f", $mz), "\t", "0", "\t", $scan, "\t", $RT2scan{$minRT}, "\t", $RT2scan{$maxRT}, "\t",
 									sprintf("%.2f", $scan2RT{$scan}), "\t", $minRT, "\t", $maxRT, "\t",
 									sprintf("%.0f", $intensity), "\t", sprintf("%.1f", $SN), "\t", sprintf("%.4f", $pctTruePeaks), "\n";
 				}

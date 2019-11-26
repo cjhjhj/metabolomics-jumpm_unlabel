@@ -77,10 +77,10 @@ featureCalibration = function (ref, comp, params, LOG) {
     comp$mz = comp$mz / (1 + estMzShift / 1e6)
     cat("    The 1st round of m/z-calibration is done\n")
     cat("      min SD of m/z-shifts =", round(min(res$dynMzSd), 4), "ppm\n")
-    cat("      min SD of m/z-shifts =", round(max(res$dynMzSd), 4), "ppm\n")
+    cat("      max SD of m/z-shifts =", round(max(res$dynMzSd), 4), "ppm\n")
     cat("    The 1st round of m/z-calibration is done\n", file = LOG)
     cat("      min SD of m/z-shifts =", round(min(res$dynMzSd), 4), "ppm\n", file = LOG)
-    cat("      min SD of m/z-shifts =", round(max(res$dynMzSd), 4), "ppm\n", file = LOG)
+    cat("      max SD of m/z-shifts =", round(max(res$dynMzSd), 4), "ppm\n", file = LOG)
     
     ## 2nd round of LOESS modeling and calibration of m/z
     rtSd = res$dynRtSd
@@ -90,10 +90,10 @@ featureCalibration = function (ref, comp, params, LOG) {
     comp$mz = comp$mz / (1 + estMzShift / 1e6)
     cat("    The 2nd round of m/z-calibration is done\n")
     cat("      min SD of m/z-shifts =", round(min(res$dynMzSd), 4), "ppm\n")
-    cat("      min SD of m/z-shifts =", round(max(res$dynMzSd), 4), "ppm\n")
+    cat("      max SD of m/z-shifts =", round(max(res$dynMzSd), 4), "ppm\n")
     cat("    The 2nd round of m/z-calibration is done\n", file = LOG)
     cat("      min SD of m/z-shifts =", round(min(res$dynMzSd), 4), "ppm\n", file = LOG)
-    cat("      min SD of m/z-shifts =", round(max(res$dynMzSd), 4), "ppm\n", file = LOG)
+    cat("      max SD of m/z-shifts =", round(max(res$dynMzSd), 4), "ppm\n", file = LOG)
     
     ## Output organization
     rtSd = res$dynRtSd

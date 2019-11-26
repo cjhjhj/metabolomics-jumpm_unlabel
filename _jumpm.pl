@@ -197,6 +197,7 @@ print $LOG "\n";
 #######################
 ## Feature alignment ##
 #######################
+=head
 ## Create alignment.params file
 open (AP, ">", "alignment.params");
 foreach my $key (sort {$a cmp $b} keys %$params) {
@@ -233,10 +234,18 @@ my $command = "Rscript $Bin/R/alignment.R alignment.params $featureFiles $tmpLog
 system ($command);
 ## $alignDir = ./align_test/ (when $$params{'output_name'} = test)
 ## abs_path($alignDir) = /Example/unlabeled_data/align_test/
+=cut
+
+my $featureFiles = join(",", @featureFileArray);
+my $alignDir = "./align_" . $$params{'output_name'};
+system(qq(mkdir $alignDir >/dev/null 2>&1));
+my $command = "Rscript $Bin/R/alignment.R $paramFile $featureFiles $tmpLog $Bin $alignDir";
+system ($command);
 
 #########################################
 ## Processing MS2 spectra for features ##
 #########################################
+=head
 ## Create featureToMs2.params file
 open (FP, ">", "featureToMs2.params");
 my $fullyAlignedFeatureFile = abs_path($alignDir) . "/" . $$params{'output_name'} . "_fully_aligned.feature";
@@ -279,6 +288,24 @@ system ($command);
 ## i.e. $ms2Path indicates the path where .MS2 files for fully-aligned features are located
 print "\n";
 print $LOG "\n";
+=cut
+
+my $fullyAlignedFeatureFile = abs_path($alignDir) . "/" . $$params{'output_name'} . "_fully_aligned.feature";
+my @tmpArray;
+for (my $i = 0; $i < scalar(@fileArray); $i++) {
+	foreach my $key (keys %fileHash) {
+		if ($fileArray[$i] eq basename($key)) {
+			my $mzXML = $key;
+			$mzXML =~ s/\.(raw|RAW|Raw)/\.mzXML/;
+			push (@tmpArray, $mzXML);
+		}
+	}
+}
+my $mzXMLs = join(",", @tmpArray);
+my ($ms2Path) = $subDir =~ /(\.\d+$)/;
+$ms2Path = abs_path($alignDir) . "/align_" . $$params{'output_name'} . $ms2Path;
+$command = "Rscript $Bin/R/featureToMs2.R $paramFile $mzXMLs $ms2Path $tmpLog";
+system ($command);
 
 ##================##
 ## Library search ##
