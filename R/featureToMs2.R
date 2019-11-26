@@ -22,7 +22,7 @@ parseParams = function (paramFile) {
             params$featureFile = as.character(val)
         } else if (key == "mzXML") {
             params$mzXMLs = as.character(val)
-        } else if (key == "tol_isolation") {
+        } else if (key == "isolation_window") {
             params$tolIsolation = as.numeric(val)
         } else if (key == "tol_precursor") {
             params$tolPrecursor = as.numeric(val)
@@ -177,7 +177,7 @@ for (m in 1:length(mzXMLs)) {
         if (h$msLevel[i] == 1) {
             ms1ScanNum = i
         } else if (h$msLevel[i] == 2) {
-            ind = which(i > df$minRT & i < df$maxRT &
+            ind = which(i > df$`minMS1Scan#` & i < df$`maxMS1Scan#` &
                             df$PercentageofTF < pctTfThreshold &
                             df$mz >= (h$precursorMZ[i] - tolIsolation) &
                             df$mz <= (h$precursorMZ[i] + tolIsolation))
@@ -335,7 +335,7 @@ featureToScanNum = cbind(rownames(featureToScanNum), featureToScanNum)
 rownames(featureToScanNum) = NULL
 colnames(featureToScanNum)[1] = "featureNumber"
 filename = paste0(outDirectory, "/featureToScanNum.txt")
-write.table(featureToScanNum, file = filename, col.names = F, row.names = F, sep = "\t", quote = F)
+write.table(featureToScanNum, file = filename, row.names = F, sep = "\t", quote = F)
 
 endTime = Sys.time()
 elapsedTime = endTime - startTime
