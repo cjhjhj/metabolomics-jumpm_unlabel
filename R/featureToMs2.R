@@ -122,6 +122,17 @@ mzXMLs = unlist(strsplit(args[3], ","))
 outDirectory = args[4]
 logFile = args[5]
 LOG = file(logFile, "a")
+
+## For testing in a desktop
+# args = commandArgs(T)
+# paramFile = "../IROAsamples/jumpm_negative.params"
+# featureFile = "../IROAsamples/.IROA_IS_NEG_fully_aligned.feature"
+# mzXMLs = "../IROAsamples/IROA_IS_NEG_1.mzXML,../IROAsamples/IROA_IS_NEG_2.mzXML,../IROAsamples/IROA_IS_NEG_3.mzXML"
+# mzXMLs = unlist(strsplit(mzXMLs, ","))
+# outDirectory = "../IROAsamples/MS2"
+# logFile = "tmplog"
+# LOG = file(logFile, "a")
+
 params = parseParams(paramFile)
 cat("\n  Identification and consolidation of MS2 spectra for the features\n")
 cat("  ================================================================\n\n")

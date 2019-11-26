@@ -290,7 +290,7 @@ print "\n";
 print $LOG "\n";
 =cut
 
-my $fullyAlignedFeatureFile = abs_path($alignDir) . "/" . $$params{'output_name'} . "_fully_aligned.feature";
+my $fullyAlignedFeatureFile = abs_path($alignDir) . "/." . $$params{'output_name'} . "_fully_aligned.feature";	## Load "hidden" fully aligned feature file
 my @tmpArray;
 for (my $i = 0; $i < scalar(@fileArray); $i++) {
 	foreach my $key (keys %fileHash) {

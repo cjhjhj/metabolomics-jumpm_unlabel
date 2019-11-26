@@ -89,7 +89,7 @@ params = parseParams(paramFile)
 files = unlist(strsplit(filenames, ","))
 
 ## For testing in a desktop
-# paramFile = "../jumpm_negative.params"
+# paramFile = "../IROAsamples/jumpm_negative.params"
 # filenames = "../IROAsamples/IROA_IS_NEG_1.1.feature,../IROAsamples/IROA_IS_NEG_2.1.feature,../IROAsamples/IROA_IS_NEG_3.1.feature"
 # # filenames = "../IROAsamples/old/IROA_IS_NEG_1.1.feature,../IROAsamples/old/IROA_IS_NEG_2.1.feature,../IROAsamples/old/IROA_IS_NEG_3.1.feature"
 # srcDirectory = "U:/Research/Projects/7Metabolomics/JUMPm"
@@ -392,6 +392,7 @@ if (length(files) > 1) {
     
     ## Old fully-matched features
     fullFeatures = cbind("meanMz" = fMz, fullFeatures)
+    fullFeatures = fullFeatures[order(fullFeatures$meanMz), ]
     outputFile = paste0(outDirectory, "/.", params$output_name, "_fully_aligned.feature") ## Hidden by adding "." (dot) to the file name
     write.table(fullFeatures, outputFile, sep = "\t", row.names = F, quote = F)
     
