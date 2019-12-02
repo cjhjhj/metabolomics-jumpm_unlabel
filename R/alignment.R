@@ -371,9 +371,17 @@ if (length(files) > 1) {
             }
         }
         if (params$mode == -1) {
-            fIon[i] = paste0("[M-", charge, "H]", charge, "-")
+            if (charge > 1) {
+                fIon[i] = paste0("[M-", charge, "H]", charge, "-")
+            } else {
+                fIon[i] = "[M-H]-"
+            }
         } else {
-            fIon[i] = paste0("[M+", charge, "H]", charge, "+")
+            if (charge > 1) {
+                fIon[i] = paste0("[M+", charge, "H]", charge, "+")
+            } else {
+                fIon[i] = "[M+H]+"
+            }
         }
     }
     refColName = sub(".\\d.feature", "", basename(files[refNo]))

@@ -3,19 +3,52 @@
 use strict;
 use warnings;
 use Data::Dumper;
+use File::Basename;
 
 ## Initialization
-my ($ms2Path) = @ARGV;
+my ($ms2Path, $featureFile, $paramFile) = @ARGV;
+#my $ms2Path = "/Research/Projects/7Metabolomics/JUMPm/IROAsamples/20191126/align_IROA_IS_NEG.1";
+#my $featureFile = "./IROAsamples/20191126/IROA_IS_NEG_fully_aligned.feature";
+#my $paramFile = "./IROAsamples/20191126/jumpm_negative.params";
+my $H = 1.007276466812;
+
+## Parse parameters/adduct information
+my %params = getParams($paramFile);
+my %adducts = getAdducts(\%params);
+
+## Loading features
+my %featureHash;
+open (FEATURE, "<", $featureFile) or die "Cannot open $featureFile\n";
+my $featureHeader = <FEATURE>;
+my (@tmp, @intColInd);
+my $colInd = 0;
+foreach (split("\t", $featureHeader)) {
+	if ($_ =~ /Intensity/) {
+		push (@tmp, $_);
+		push (@intColInd, $colInd);
+	}
+	$colInd++;
+}
+$featureHeader = join("\t", @tmp);
+while (<FEATURE>) {
+	chomp($_);
+	my @elems = split("\t", $_);
+	my ($num, $ion, $mz, $rt) = @elems[0..3];
+	$featureHash{$num}{'ion'} = $ion;
+	($featureHash{$num}{'charge'}) = $ion =~ /\[*.\](\d)[+-]/;
+	$featureHash{$num}{'mz'} = $mz;
+	$featureHash{$num}{'rt'} = $rt;
+	$featureHash{$num}{'intensity'} = join("\t", @elems[@intColInd]);
+}
+close (FEATURE);
+
+## Loading .score files
 $ms2Path =~ s/\/$//;
-my $outFile1 = $ms2Path . ".spectrum_matches";	## .spectrum_matches file containing all target and decoy structures with mscores for each feature
-my $outFile2 = $ms2Path . ".structure"; ## .structure file containing a unique (target or decoy structure
-open (OUT1, ">", $outFile1) or die "Cannot open $outFile1\n";
-open (OUT2, ">", $outFile2) or die "Cannot open $outFile2\n";
-my $header = "FeatureNo\tMass\tFormula\tName\tStructure\tInChi\tType\tAdduct\t" . 
-			"NumMeasuredPeaks\tNumTheoreticalPeaks\tNumMatchedPeaks\tMscore\tIntensityRatio\n";
-print OUT1 $header;
-print OUT2 $header;
- 
+my $outFile = $ms2Path . ".result";
+my $header = "FeatureNo\tIon\tm\/z\tRT\tFormula\tdeltaPPM\tTarget\/Decoy\t" . 
+			"Name\tHMDBID\tSMILES\tInChiKey\tMscore\t" . $featureHeader;
+open (OUT, ">", $outFile) or die "Cannot open $outFile\n";
+print OUT $header;
 ## Sort .score files according to the feature number
 my @scoreFiles = glob("$ms2Path/*.score");
 my @featureNums;
@@ -30,44 +63,91 @@ my @index = sort {$featureNums[$a] <=> $featureNums[$b]} (0..$#featureNums);
 ## Read each .score file and write to output files
 for (my $i = 0; $i < scalar(@scoreFiles); $i++) {
 	open (SCORE, "<", $scoreFiles[$i]) or die "Cannot open $scoreFiles[$i]\n";	
-	my $bestEntry;	## The best structure which has the highest "mscore"
-	my $bestMscore = 0;	
+	my ($featureNo) = basename($scoreFiles[$i]) =~ /f(\d+).MS2.score/;
+	my (@entries, @mscores);
 	while (<SCORE>) {
-		chomp ($_);
-		my $line = $_;
-		next if ($line =~ "Index");
-
-		## Replace the first element of $line (i.e. contents of .score file)
-		## with 'feature number' 
-		my @elems = split(/\t/, $line);
-		$elems[0] = $featureNums[$i];
-		$line = join("\t", @elems);
-		
-		## Write to .spectrum_matches file
-		print OUT1 $line, "\n";
-		
-		## Choose the entry with the highest mscore (i.e. best entry)
-		my $mscore = (split(/\t/, $line))[-2];	## mscore is the second last element
-		if ($mscore == -0) {
-			$mscore = 0;
-		}
-		if (!defined ($bestEntry)) {
-			$bestEntry = $line;
-			$bestMscore = $mscore;
-		} else {
-			if ($mscore > $bestMscore) {
-				$bestEntry = $line;
-				$bestMscore = $mscore;
+		chomp ($_);		
+		next if ($_ =~ "Index");
+		my @elems = split(/\t/, $_);
+		my ($dummy1, $neutralMass, $formula, $name, $inchi, $inchikey, $type, $adduct, $dummy2, $dummy3, $dummy4, $mscore, ) = @elems;
+		my $ion = $featureHash{$featureNo}{'ion'};
+		## Handling of adducts
+		if ($adduct ne "NA") {
+			my $charge = $featureHash{$featureNo}{'charge'};
+			if ($adduct eq "2H") {
+				my $coeff = $charge + 1;
+				$ion =~ s/M-\d/M-$coeff/;
+			} elsif ($adduct eq "-2H+Na") {
+				my $coeff = $charge + 1;
+				$ion =~ s/M-\d/M-$coeff/;
+				$ion =~ s/(M[+-].*H)/$1+Na/;
+			} elsif ($adduct eq "-2H+K") {
+				my $coeff = $charge + 1;
+				$ion =~ s/M-\d/M-$coeff/;
+				$ion =~ s/(M[+-].*H)/$1+K/;
+			} else {
+				$ion =~ s/(M[+-].*H)/$1+$adduct/;
 			}
 		}
+		my $mz = $featureHash{$featureNo}{'mz'};
+		my $rt = $featureHash{$featureNo}{'rt'};
+		my $intensity = $featureHash{$featureNo}{'intensity'};
+		my $charge = $featureHash{$featureNo}{'charge'};
+		my $theoMz;
+		if ($params{'mode'} == -1) {
+			$theoMz = ($neutralMass - $charge * $H) / $charge;
+		} else {
+			$theoMz = ($neutralMass + $charge * $H) / $charge;
+		}
+		my $ppm = ($mz - $theoMz) / $theoMz * 1e6;
+		my $line = "$featureNo\t$ion\t$mz\t$rt\t$formula\t$ppm\t$type\t$name\t$inchi\t$inchikey\t$mscore\t$intensity"; 
+		push (@entries, $line);
+		push (@mscores, $mscore);
 	}
 	close (SCORE);
-	## Sometimes, in spite of the existence of .out file, 
-	## DB-matched entry in .out file may not have structure information (SMILES)
-	## This entry in .out file needs to be skipped
-	if (defined $bestEntry) {
-		print OUT2 $bestEntry, "\n";
-	}	
+	my @ind = sort {$mscores[$b] <=> $mscores[$a]} (0..$#mscores);
+	@entries = @entries[@ind];
+	for (my $j = 0; $j < scalar(@entries); $j++) {
+		print OUT "$entries[$j]\n";
+	}
 }
-close (OUT1);
-close (OUT2);
+close (OUT);
+
+#################
+## Subroutines ##
+#################
+sub getParams {
+	my ($file) = @_;
+	if (!-e $file) {
+		die "Cannot open a parameter file. Please check the path of the parameter file\n";
+	}
+	my %params;
+	my $nInputFiles = 0;
+	open (PARAMS, "<", $file);
+	while (<PARAMS>) {
+		next if (!/\=/ || /^\#/ || /^\s+\#/);
+		$_ =~ s/\s+//g;
+		$_ =~ s/\#.*//;
+		my ($key, $value)  = split("\=", $_);
+		if ($key eq "input_file") {
+			$params{$key}[$nInputFiles] = $value;
+			$nInputFiles++;
+		} else {
+			$params{$key} = $value;
+		}
+				
+	}
+	close (PARAMS);
+	return (%params);
+}
+
+sub getAdducts {
+	my ($paramHash) = @_;
+	my %adducts;
+	foreach my $param (keys %$paramHash) {
+		if ($param =~/adduct\_(.*)/) {
+			$adducts{$1} = $$paramHash{$param};
+		}
+	}
+	return (%adducts);
+}

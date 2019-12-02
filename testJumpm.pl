@@ -28,11 +28,29 @@ use Getopt::Long;
 #	print "$i\n";
 #}
 
-my $paramFile;
-GetOptions('-p=s' => \$paramFile,);
-if (!-e ($paramFile)) {
-	print "Please input the parameter file\n\n";
-	exit;
-}
-print "$paramFile\n";
-print Dumper(@ARGV), "\n";
+#my $paramFile;
+#GetOptions('-p=s' => \$paramFile,);
+#if (!-e ($paramFile)) {
+#	print "Please input the parameter file\n\n";
+#	exit;
+#}
+#print "$paramFile\n";
+#print Dumper(@ARGV), "\n";
+
+#my $str = "[M-3H]3-";
+#my $charge = 3;
+#my $coeff = $charge + 1;
+#$str =~ s/M-\d/M-$coeff/;
+#print "$str\n";
+
+#my $str = "[M-2H]2-";
+#my $charge = 2;
+#my $coeff = $charge + 1;
+#$str =~ s/M-\d/M-$coeff/;
+#$str =~ s/(M[+-].*H)/$1+Na/;
+#print "$str\n";
+
+my $str = "[M-2H]2-";
+my $adduct = "HCOO";
+$str =~ s/(M[+-].*H)/$1+$adduct/;
+print "$str\n";

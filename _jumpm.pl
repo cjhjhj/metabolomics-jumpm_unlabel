@@ -395,6 +395,8 @@ if ($$params{'database_search'} == 1) {
 	##################################
 	## Create a result table (file) ##
 	##################################
+	my $command = "perl $Bin/generateResult.pl $ms2Path $fullyAlignedFeatureFile paramFile";
+=head
 	print "\n  Tables containing results are being generated\n";
 	$ms2Path =~ s/\/$//;
 	my $outFile1 = $ms2Path . ".spectrum_matches";  ## .spectrum_matches file containing all target and decoy structures with mscores for each feature
@@ -455,17 +457,19 @@ if ($$params{'database_search'} == 1) {
 	}
 	close (OUT1);
 	close (OUT2);	
+=cut
 } else {
 	print "  Database search is skipped according to the parameter\n";
 	print $LOG "  Database search is skipped according to the parameter\n";	
 }
 
+
 #######################################
 ## Copy parameter files and LOG file ##
 #######################################
 system ("cp $paramFile $alignDir");
-system ("mv alignment.params $alignDir");
-system ("mv featureToMs2.params $alignDir");
+#system ("mv alignment.params $alignDir");
+#system ("mv featureToMs2.params $alignDir");
 system ("cp $tmpLog $alignDir/JUMPm.log");
 system ("rm $tmpLog");
 

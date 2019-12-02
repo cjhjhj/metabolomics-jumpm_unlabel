@@ -207,7 +207,7 @@ sub getAdducts {
 	my ($paramHash) = @_;
 	my %adducts;
 	foreach my $param (keys %$paramHash) {
-		if ($param =~/adduct\_(\w+)/) {
+		if ($param =~/adduct\_(.*)/) {
 			$adducts{$1} = $$paramHash{$param};
 		}
 	}
