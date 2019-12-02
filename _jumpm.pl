@@ -395,7 +395,7 @@ if ($$params{'database_search'} == 1) {
 	##################################
 	## Create a result table (file) ##
 	##################################
-	my $command = "perl $Bin/generateResult.pl $ms2Path $fullyAlignedFeatureFile paramFile";
+	my $command = "perl $Bin/generateResult.pl $ms2Path $fullyAlignedFeatureFile $paramFile";
 	system ($command);
 
 =head
