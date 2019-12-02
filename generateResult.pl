@@ -36,6 +36,9 @@ while (<FEATURE>) {
 	my ($num, $ion, $mz, $rt) = @elems[0..3];
 	$featureHash{$num}{'ion'} = $ion;
 	($featureHash{$num}{'charge'}) = $ion =~ /\[*.\](\d)[+-]/;
+	if (!defined $featureHash{$num}{'charge'}) {
+		$featureHash{$num}{'charge'} = 1;
+	}
 	$featureHash{$num}{'mz'} = $mz;
 	$featureHash{$num}{'rt'} = $rt;
 	$featureHash{$num}{'intensity'} = join("\t", @elems[@intColInd]);
