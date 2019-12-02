@@ -43,14 +43,14 @@ use Getopt::Long;
 #$str =~ s/M-\d/M-$coeff/;
 #print "$str\n";
 
-#my $str = "[M-2H]2-";
-#my $charge = 2;
-#my $coeff = $charge + 1;
-#$str =~ s/M-\d/M-$coeff/;
-#$str =~ s/(M[+-].*H)/$1+Na/;
-#print "$str\n";
-
 my $str = "[M-2H]2-";
-my $adduct = "HCOO";
-$str =~ s/(M[+-].*H)/$1+$adduct/;
+my ($charge) = $str =~ /\[*.\](\d)[+-]/;
+my $coeff = $charge + 1;
+$str =~ s/(M-.*)H/M-\Q$coeff\EH/;
+#$str =~ s/(M[+-].*H)/$1+Na/;
 print "$str\n";
+
+#my $str = "[M-2H]2-";
+#my $adduct = "HCOO";
+#$str =~ s/(M[+-].*H)/$1+$adduct/;
+#print "$str\n";

@@ -49,7 +49,7 @@ close (FEATURE);
 $ms2Path =~ s/\/$//;
 my $outFile = $ms2Path . ".result";
 my $header = "FeatureNo\tIon\tm\/z\tRT\tFormula\tdeltaPPM\tTarget\/Decoy\t" . 
-			"Name\tHMDBID\tSMILES\tInChiKey\tMscore\t" . $featureHeader;
+			"Name\tSMILES\tInChiKey\tMscore\t" . $featureHeader;
 open (OUT, ">", $outFile) or die "Cannot open $outFile\n";
 print OUT $header;
 ## Sort .score files according to the feature number
@@ -79,14 +79,14 @@ for (my $i = 0; $i < scalar(@scoreFiles); $i++) {
 			my $charge = $featureHash{$featureNo}{'charge'};
 			if ($adduct eq "2H") {
 				my $coeff = $charge + 1;
-				$ion =~ s/M-\d/M-$coeff/;
+				$ion =~ s/(M-.*)H/M-\Q$coeff\EH/;				
 			} elsif ($adduct eq "-2H+Na") {
 				my $coeff = $charge + 1;
-				$ion =~ s/M-\d/M-$coeff/;
+				$ion =~ s/(M-.*)H/M-\Q$coeff\EH/;
 				$ion =~ s/(M[+-].*H)/$1+Na/;
 			} elsif ($adduct eq "-2H+K") {
 				my $coeff = $charge + 1;
-				$ion =~ s/M-\d/M-$coeff/;
+				$ion =~ s/(M-.*)H/M-\Q$coeff\EH/;
 				$ion =~ s/(M[+-].*H)/$1+K/;
 			} else {
 				$ion =~ s/(M[+-].*H)/$1+$adduct/;
