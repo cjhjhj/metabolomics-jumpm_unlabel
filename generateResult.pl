@@ -48,7 +48,7 @@ close (FEATURE);
 ## Loading .score files
 $ms2Path =~ s/\/$//;
 my $outFile = $ms2Path . ".result";
-my $header = "FeatureNo\tIon\tm\/z\tRT\tFormula\tdeltaPPM\tTarget\/Decoy\t" . 
+my $header = "FeatureNo\tIon\tm\/z\tRT\tFormula\tTarget\/Decoy\t" . 
 			"Name\tSMILES\tInChiKey\tMscore\t" . $featureHeader;
 open (OUT, ">", $outFile) or die "Cannot open $outFile\n";
 print OUT $header;
@@ -74,9 +74,9 @@ for (my $i = 0; $i < scalar(@scoreFiles); $i++) {
 		my @elems = split(/\t/, $_);
 		my ($dummy1, $neutralMass, $formula, $name, $inchi, $inchikey, $type, $adduct, $dummy2, $dummy3, $dummy4, $mscore, ) = @elems;
 		my $ion = $featureHash{$featureNo}{'ion'};
+		my $charge = $featureHash{$featureNo}{'charge'};
 		## Handling of adducts
 		if ($adduct ne "NA") {
-			my $charge = $featureHash{$featureNo}{'charge'};
 			if ($adduct eq "2H") {
 				my $coeff = $charge + 1;
 				$ion =~ s/(M-.*)H/M-\Q$coeff\EH/;				
@@ -95,15 +95,7 @@ for (my $i = 0; $i < scalar(@scoreFiles); $i++) {
 		my $mz = $featureHash{$featureNo}{'mz'};
 		my $rt = $featureHash{$featureNo}{'rt'};
 		my $intensity = $featureHash{$featureNo}{'intensity'};
-		my $charge = $featureHash{$featureNo}{'charge'};
-		my $theoMz;
-		if ($params{'mode'} == -1) {
-			$theoMz = ($neutralMass - $charge * $H) / $charge;
-		} else {
-			$theoMz = ($neutralMass + $charge * $H) / $charge;
-		}
-		my $ppm = ($mz - $theoMz) / $theoMz * 1e6;
-		my $line = "$featureNo\t$ion\t$mz\t$rt\t$formula\t$ppm\t$type\t$name\t$inchi\t$inchikey\t$mscore\t$intensity"; 
+		my $line = "$featureNo\t$ion\t$mz\t$rt\t$formula\t$type\t$name\t$inchi\t$inchikey\t$mscore\t$intensity"; 
 		push (@entries, $line);
 		push (@mscores, $mscore);
 	}
