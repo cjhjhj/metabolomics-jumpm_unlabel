@@ -395,6 +395,7 @@ if ($$params{'database_search'} == 1) {
 	##################################
 	## Create a result table (file) ##
 	##################################
+	my $fullyAlignedFeatureFile = abs_path($alignDir) . "/" . $$params{'output_name'} . "_fully_aligned.feature";	## Load "new" fully aligned feature file
 	my $command = "perl $Bin/generateResult.pl $ms2Path $fullyAlignedFeatureFile $paramFile";
 	system ($command);
 
