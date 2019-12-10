@@ -88,8 +88,10 @@ outDirectory = args[5]
 params = parseParams(paramFile)
 files = unlist(strsplit(filenames, ","))
 
-## For testing in a desktop
+# ## For testing in a desktop
+# startTime = Sys.time()
 # paramFile = "../IROAsamples/jumpm_negative.params"
+# # filenames = "../IROAsamples/IROA_IS_NEG_1.1.feature"
 # filenames = "../IROAsamples/IROA_IS_NEG_1.1.feature,../IROAsamples/IROA_IS_NEG_2.1.feature,../IROAsamples/IROA_IS_NEG_3.1.feature"
 # # filenames = "../IROAsamples/old/IROA_IS_NEG_1.1.feature,../IROAsamples/old/IROA_IS_NEG_2.1.feature,../IROAsamples/old/IROA_IS_NEG_3.1.feature"
 # srcDirectory = "U:/Research/Projects/7Metabolomics/JUMPm"
@@ -348,57 +350,10 @@ if (length(files) > 1) {
     ############################
     ## Write output to files  ##
     ############################
-    ## New fully-matched features (formatting according to the discussion on 2019/11/19)
-    fullFeatures = res$fullFeatures
-    fNum = c(1:dim(fullFeatures)[1])
-    fMz = round(apply(fullFeatures[, grep("mz", colnames(fullFeatures))], 1, mean, na.rm = T), 5) # Feature m/z (averaged over runs)
-    fIon = NULL
-    for (i in 1:dim(fullFeatures)[1]) {
-        ## Determination of the charge state
-        ##   Heuristic rules
-        ##   1. Prefer the charge state other than 0
-        ##   2. When multiple charge states have the same frequency over samples, choose the lower one
-        charges = fullFeatures[i, grep("_z", colnames(fullFeatures))]
-        charges = charges[!is.na(charges)]
-        charges = setdiff(as.numeric(charges), 0)
-        if (length(charges) == 0) {
-            charge = 1
-        } else {
-            temp = table(as.numeric(charges))
-            charge = as.numeric(names(temp)[temp == max(temp)])
-            if (length(charge) > 1) {
-                charge = charge[1]
-            }
-        }
-        if (params$mode == -1) {
-            if (charge > 1) {
-                fIon[i] = paste0("[M-", charge, "H]", charge, "-")
-            } else {
-                fIon[i] = "[M-H]-"
-            }
-        } else {
-            if (charge > 1) {
-                fIon[i] = paste0("[M+", charge, "H]", charge, "+")
-            } else {
-                fIon[i] = "[M+H]+"
-            }
-        }
-    }
-    refColName = sub(".\\d.feature", "", basename(files[refNo]))
-    fRT = round(fullFeatures[, which(colnames(fullFeatures) == paste0(refColName, "_RT"))] / 60, 2) # Feature RT (from reference run), unit of minute, 2 decimal
-    fMaxRT = fullFeatures[, which(colnames(fullFeatures) == paste0(refColName, "_maxRT"))] # Feature max RT (from reference run)
-    fMinRT = fullFeatures[, which(colnames(fullFeatures) == paste0(refColName, "_minRT"))] # Feature min RT (from reference run)
-    fWidth = round((fMaxRT - fMinRT) / 60, 2) # Feature width (maxRT - minRT of feature), unit of minute, 2 decimal
-    fSNratio = fullFeatures[, which(colnames(fullFeatures) == paste0(refColName, "_SN"))] # Feature S/N ratio (from reference run)
-    fIntensities = fullFeatures[, grep("Intensity", colnames(fullFeatures))]
-    outDf = cbind("Feature_ion" = fIon, "Feature_m/z" = fMz, "Feature_RT"= fRT, "Feature_width" = fWidth, "Feature_SNratio" = fSNratio, fIntensities)
-    outDf = outDf[order(outDf$`Feature_m/z`), ]
-    fNum = c(1:dim(outDf)[1])
-    outDf = cbind("Feature_num" = fNum, outDf)
-    outputFile = paste0(outDirectory, "/", params$output_name, "_fully_aligned.feature")
-    write.table(outDf, outputFile, sep = "\t", row.names = F, quote = F)
-    
     ## Old fully-matched features
+    fullFeatures = res$fullFeatures
+    fMz = round(apply(fullFeatures[, grep("mz", colnames(fullFeatures))], 1, mean, na.rm = T), 5) # Feature m/z (averaged over runs)
+    meanMz = round(apply(fullFeatures[, grep("mz", colnames(fullFeatures))], 1, mean, na.rm = T), 5) # Feature m/z (averaged over runs)
     fullFeatures = cbind("meanMz" = fMz, fullFeatures)
     fullFeatures = fullFeatures[order(fullFeatures$meanMz), ]
     outputFile = paste0(outDirectory, "/.", params$output_name, "_fully_aligned.feature") ## Hidden by adding "." (dot) to the file name
@@ -422,18 +377,81 @@ if (length(files) > 1) {
 } else {
     cat("  Since a single file is used, the feature alignment step is skipped\n")
     cat("  Since a single file is used, the feature alignment step is skipped\n", file = LOG)
+    
+    ## Old fully-matched features
     fullFeatures = features[[1]]
     meanMz = fullFeatures$mz
     filename = basename(files[1])
     filename = gsub(".\\d+.feature", "", filename)
     colnames(fullFeatures) = paste0(filename, "_", colnames(fullFeatures))
     fullFeatures = cbind(meanMz, fullFeatures)
-    outputFile = paste0(outDirectory, "/", params$output_name, "_fully_aligned.feature")
+    outputFile = paste0(outDirectory, "/.", params$output_name, "_fully_aligned.feature")
     nFeatures = dim(fullFeatures)[1]
     cat(" ", nFeatures, "features are detected\n")
     cat(" ", nFeatures, "features are detected\n", file = LOG)
     write.table(fullFeatures, outputFile, sep = "\t", row.names = F, quote = F)
 }
+
+## New fully-matched features (formatting according to the discussion on 2019/11/19)
+if (length(files) > 1) {
+    fullFeatures = res$fullFeatures
+    fMz = round(apply(fullFeatures[, grep("mz", colnames(fullFeatures))], 1, mean, na.rm = T), 5) # Feature m/z (averaged over runs)
+    refColName = sub(".\\d.feature", "", basename(files[refNo]))
+    refColName = paste0(refColName, "_")
+} else {
+    fullFeatures = features[[1]]
+    fMz = fullFeatures[, grep("mz", colnames(fullFeatures))] # Feature m/z
+    refColName = ""
+}
+fNum = c(1:dim(fullFeatures)[1])
+fIon = NULL
+for (i in 1:dim(fullFeatures)[1]) {
+    ## Determination of the charge state
+    ##   Heuristic rules
+    ##   1. Prefer the charge state other than 0
+    ##   2. When multiple charge states have the same frequency over samples, choose the lower one
+    charges = fullFeatures[i, grep("_z", colnames(fullFeatures))]
+    charges = charges[!is.na(charges)]
+    charges = setdiff(as.numeric(charges), 0)
+    if (length(charges) == 0) {
+        charge = 1
+    } else {
+        temp = table(as.numeric(charges))
+        charge = as.numeric(names(temp)[temp == max(temp)])
+        if (length(charge) > 1) {
+            charge = charge[1]
+        }
+    }
+    if (params$mode == -1) {
+        if (charge > 1) {
+            fIon[i] = paste0("[M-", charge, "H]", charge, "-")
+        } else {
+            fIon[i] = "[M-H]-"
+        }
+    } else {
+        if (charge > 1) {
+            fIon[i] = paste0("[M+", charge, "H]", charge, "+")
+        } else {
+            fIon[i] = "[M+H]+"
+        }
+    }
+}
+fRT = round(fullFeatures[, which(colnames(fullFeatures) == paste0(refColName, "RT"))] / 60, 2) # Feature RT (from reference run), unit of minute, 2 decimal
+fMaxRT = fullFeatures[, which(colnames(fullFeatures) == paste0(refColName, "maxRT"))] # Feature max RT (from reference run)
+fMinRT = fullFeatures[, which(colnames(fullFeatures) == paste0(refColName, "minRT"))] # Feature min RT (from reference run)
+fWidth = round((fMaxRT - fMinRT) / 60, 2) # Feature width (maxRT - minRT of feature), unit of minute, 2 decimal
+fSNratio = fullFeatures[, which(colnames(fullFeatures) == paste0(refColName, "SN"))] # Feature S/N ratio (from reference run)
+if (length(files) > 1) {
+    fIntensities = fullFeatures[, grep("Intensity", colnames(fullFeatures))]
+} else {
+    fIntensities = data.frame("Feature_intensity" = fullFeatures[, grep("Intensity", colnames(fullFeatures))])
+}
+outDf = cbind("Feature_ion" = fIon, "Feature_m/z" = fMz, "Feature_RT"= fRT, "Feature_width" = fWidth, "Feature_SNratio" = fSNratio, fIntensities)
+outDf = outDf[order(outDf$`Feature_m/z`), ]
+fNum = c(1:dim(outDf)[1])
+outDf = cbind("Feature_num" = fNum, outDf)
+outputFile = paste0(outDirectory, "/", params$output_name, "_fully_aligned.feature")
+write.table(outDf, outputFile, sep = "\t", row.names = F, quote = F)
 
 endTime = Sys.time()
 elapsedTime = endTime - startTime
