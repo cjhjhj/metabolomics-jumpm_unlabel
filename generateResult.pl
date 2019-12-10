@@ -23,7 +23,7 @@ my $featureHeader = <FEATURE>;
 my (@tmp, @intColInd);
 my $colInd = 0;
 foreach (split("\t", $featureHeader)) {
-	if ($_ =~ /Intensity/) {
+	if (lc($_) =~ /intensity/) {
 		push (@tmp, $_);
 		push (@intColInd, $colInd);
 	}
