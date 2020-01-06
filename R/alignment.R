@@ -77,29 +77,29 @@ parseParams = function (paramFile) {
 ############################
 ## Parse input arguments  ##
 ############################
-# startTime = Sys.time()
-# args = commandArgs(trailingOnly = TRUE)
-# paramFile = args[1]
-# filenames = args[2]
-# logFile = args[3]
-# LOG = file(logFile, "a")
-# srcDirectory = args[4]
-# outDirectory = args[5]
-# params = parseParams(paramFile)
-# files = unlist(strsplit(filenames, ","))
-
-## For testing in a desktop
 startTime = Sys.time()
-paramFile = "../IROAsamples/jumpm_negative.params"
-# filenames = "../IROAsamples/IROA_c18_target1.1.feature"
-filenames = "../IROAsamples/IROA_IS_NEG_1.1.feature,../IROAsamples/IROA_IS_NEG_2.1.feature,../IROAsamples/IROA_IS_NEG_3.1.feature"
-# filenames = "../IROAsamples/old/IROA_IS_NEG_1.1.feature,../IROAsamples/old/IROA_IS_NEG_2.1.feature,../IROAsamples/old/IROA_IS_NEG_3.1.feature"
-srcDirectory = "U:/Research/Projects/7Metabolomics/JUMPm"
-outDirectory = "."
-logFile = "tmplog"
-LOG = file(logFile, 'a')
+args = commandArgs(trailingOnly = TRUE)
+paramFile = args[1]
+filenames = args[2]
+logFile = args[3]
+LOG = file(logFile, "a")
+srcDirectory = args[4]
+outDirectory = args[5]
 params = parseParams(paramFile)
 files = unlist(strsplit(filenames, ","))
+
+# ## For testing in a desktop
+# startTime = Sys.time()
+# paramFile = "../IROAsamples/jumpm_negative.params"
+# # filenames = "../IROAsamples/IROA_c18_target1.1.feature"
+# filenames = "../IROAsamples/IROA_IS_NEG_1.1.feature,../IROAsamples/IROA_IS_NEG_2.1.feature,../IROAsamples/IROA_IS_NEG_3.1.feature"
+# # filenames = "../IROAsamples/old/IROA_IS_NEG_1.1.feature,../IROAsamples/old/IROA_IS_NEG_2.1.feature,../IROAsamples/old/IROA_IS_NEG_3.1.feature"
+# srcDirectory = "U:/Research/Projects/7Metabolomics/JUMPm"
+# outDirectory = "."
+# logFile = "tmplog"
+# LOG = file(logFile, 'a')
+# params = parseParams(paramFile)
+# files = unlist(strsplit(filenames, ","))
 
 #############################################
 ## Read feature files generated from JUMPm ##
