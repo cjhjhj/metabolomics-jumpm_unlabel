@@ -45,7 +45,8 @@ while (<LIB>) {
 
 	## Open .MS2 file and calculate m/z of the library feature
 	my $ms2File = $libInfo[$i]{"$columnInfo" . "_linkms2"};
-	next if ($ms2File eq "na" || $ms2File eq undef);	## Skip, if MS2 file for a library entry is not prepared
+	next if (!defined($ms2File));	## Skip, if MS2 file for a library entry is not prepared
+	next if ($ms2File eq "na");
 	open (MS2, "<", $ms2File) or die "Cannot open $ms2File\n";
 	my $header = <MS2>;
 	while (<MS2>) {
