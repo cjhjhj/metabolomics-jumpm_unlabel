@@ -37,17 +37,19 @@ my $libFile = $params{'library'};
 open (LIB, "<", $libFile) or die "Cannot open $libFile\n";
 my $header = <LIB>;
 my @headerElems = split(/\t/, $header);
+my $ms2FileColName = "$columnInfo" . "_linkms2";
+my ($ms2FileColInd) = grep {$headerElems[$_] eq $ms2FileColName} 0..$#headerElems;
 my $i = 0;
 while (<LIB>) {
 	chomp($_);
 	my @elems = split(/\t/, $_);
-	@{$libInfo[$i]}{@headerElems} = @elems;
-
+	
 	## Open .MS2 file and calculate m/z of the library feature
-	my $ms2File = $libInfo[$i]{"$columnInfo" . "_linkms2"};
+	my $ms2File = $elems[$ms2FileColInd];
 	next if (!defined($ms2File));	## Skip, if MS2 file for a library entry is not prepared
 	next if ($ms2File eq "na");
 	open (MS2, "<", $ms2File) or die "Cannot open $ms2File\n";
+	@{$libInfo[$i]}{@headerElems} = @elems;
 	my $header = <MS2>;
 	while (<MS2>) {
 		chomp ($_);
