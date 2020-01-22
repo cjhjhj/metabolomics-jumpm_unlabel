@@ -54,8 +54,10 @@ while (<LIB>) {
 	while (<MS2>) {
 		chomp ($_);
 		my ($mz, $int) = split(/\t/, $_);
-		push (@{$libInfo[$i]{"$columnInfo" . "_ms2"}{'mz'}}, $mz);
-		push (@{$libInfo[$i]{"$columnInfo" . "_ms2"}{'int'}}, $int);
+		if (defined ($mz) && defined ($int)) {	## To prevent reading empty line(s)
+			push (@{$libInfo[$i]{"$columnInfo" . "_ms2"}{'mz'}}, $mz);
+			push (@{$libInfo[$i]{"$columnInfo" . "_ms2"}{'int'}}, $int);			
+		}
 	}
 	close (MS2);
 	chomp($header);
@@ -110,8 +112,10 @@ while (<FEATURE>) {
 		while (<MS2>) {
 			chomp ($_);
 			my ($mz, $int) = split(/\t/, $_);
-			push (@{$featInfo[$i]{"ms2"}{"mz"}}, $mz);
-			push (@{$featInfo[$i]{"ms2"}{"int"}}, $int);
+			if (defined ($mz) && defined ($int)) {	## To prevent reading empty line(s)
+				push (@{$featInfo[$i]{"ms2"}{"mz"}}, $mz);
+				push (@{$featInfo[$i]{"ms2"}{"int"}}, $int);				
+			}
 		}	
 		close (MS2);
 		chomp ($header);
