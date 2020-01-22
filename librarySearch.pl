@@ -203,7 +203,7 @@ print "\n";
 ## Match features and library metabolites ##
 ############################################
 my %res;
-my $minP = 1;
+my $minP = 1;	## To prevent a p-value of zero, the overall minimum p-value (no matter from similarity or RT) is obtained and used later
 open (ERR, ">", "measured_rt_error.txt");
 for (my $i = 1; $i < scalar(@featInfo); $i++) {
 	## Compare each feature's m/z and RT with every library metabolite
@@ -221,15 +221,18 @@ for (my $i = 1; $i < scalar(@featInfo); $i++) {
 		my $mzDiff = abs($libMz - $featMz) / $libMz * 1e6;
 		my $rtDiff = abs($featRt - $libRt);
 		if ($mzDiff < $matchMzTol) {
-			## Calculate the similarity between feature and library MS2 spectra
-			print ERR "$i\t$j\t$rtDiff\n";
+			## Calculate the similarity between feature and library MS2 spectra			
 			my $sim = calcMS2Similarity($featInfo[$i]{"ms2"}, $libInfo[$j]{"$columnInfo" . "_ms2"});
+
+			## If the peak has already a "well"-matched library entry, then skip
+			next if (defined ($res{$i}{$j}{'sim'}) && $res{$i}{$j}{'sim'} >= $sim);
 			$res{$i}{$j}{'sim'} = $sim;
 			$res{$i}{$j}{'simP'} = 1 - $sim;
 			if ((1 - $sim) > 0) {
 				$minP = min(1 - $sim, $minP);
 			}
 			$res{$i}{$j}{'rtErr'} = $rtDiff;
+			print ERR "$i\t$j\t$rtDiff\n";
 		}
 	} 
 } 
@@ -326,7 +329,12 @@ sub calcMS2Similarity {
 	my $k = min(scalar(@{$$feat{'mz'}}), scalar(@{$$lib{'mz'}}));
 	$k = min($k, 30);
 	
-	## Sort arrays in descending order of intensity and keep $k strongest peaks
+	## Return 0 similarity when there are too few peaks in a feature and/or a library entry
+	if ($k < 5) {	## When there are less than 5 peaks
+		return (0);
+	}
+	
+ 	## Sort arrays in descending order of intensity and keep $k strongest peaks
 	my @ind = sort {$$feat{'int'}[$b] <=> $$feat{'int'}[$a]} 0..$#{$$feat{'int'}};
 	@{$$feat{'mz'}} = @{$$feat{'mz'}}[@ind[0..($k - 1)]];
 	@{$$feat{'int'}} = @{$$feat{'int'}}[@ind[0..($k - 1)]];
