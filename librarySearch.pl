@@ -333,11 +333,6 @@ sub calcMS2Similarity {
 	my $k = min(scalar(@{$$feat{'mz'}}), scalar(@{$$lib{'mz'}}));
 	$k = min($k, 30);
 	
-	## Return 0 similarity when there are too few peaks in a feature and/or a library entry
-	if ($k < 5) {	## When there are less than 5 peaks
-		return (0);
-	}
-	
  	## Sort arrays in descending order of intensity and keep $k strongest peaks
 	my @ind = sort {$$feat{'int'}[$b] <=> $$feat{'int'}[$a]} 0..$#{$$feat{'int'}};
 	@{$$feat{'mz'}} = @{$$feat{'mz'}}[@ind[0..($k - 1)]];
