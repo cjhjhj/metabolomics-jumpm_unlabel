@@ -138,6 +138,7 @@ matchFeatures = function (ref, comp, refName, compName, rtSd, mzSd, params, LOG)
   j = 1
   mzShifts = NULL
   rtShifts = NULL
+  
   for (i in 1:n) {
     mz = ref$mz[i]
     rt = ref$RT[i]

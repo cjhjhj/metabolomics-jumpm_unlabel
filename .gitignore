@@ -38,3 +38,5 @@ R/IROA_IS_NEG_IROA_IS_NEG_2_unaligned.feature
 R/IROA_IS_NEG_IROA_IS_NEG_3_unaligned.feature
 R/IROA_IS_NEG_fully_aligned.feature
 R/IROA_IS_NEG_partially_aligned.feature
+jumpm_library_positive.params
+featureDetectionTest.pl

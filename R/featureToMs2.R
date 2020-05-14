@@ -26,6 +26,8 @@ parseParams = function (paramFile) {
             params$tolIsolation = as.numeric(val)
         } else if (key == "tol_precursor") {
             params$tolPrecursor = as.numeric(val)
+        } else if (key == "max_percentage_RT_range") {
+            params$pctTfThreshold = as.numeric(val)
         } else if (key == "tol_intra_ms2_consolidation") {
             params$tolIntraMs2Consolidation = as.numeric(val)
         } else if (key == "tol_inter_ms2_consolidation") {
@@ -123,10 +125,11 @@ outDirectory = args[4]
 logFile = args[5]
 LOG = file(logFile, "a")
 
-## For testing in a desktop
+# # For testing in a desktop
 # args = commandArgs(T)
-# paramFile = "../IROAsamples/jumpm_negative.params"
-# featureFile = "../IROAsamples/.IROA_IS_NEG_fully_aligned.feature"
+# paramFile = "../IROAsamples/jumpm_negative_desktop.params"
+# # featureFile = "../IROAsamples/.IROA_IS_NEG_fully_aligned.feature"
+# featureFile = "../IROAsamples/20191126/.IROA_IS_NEG_fully_aligned.feature"
 # mzXMLs = "../IROAsamples/IROA_IS_NEG_1.mzXML,../IROAsamples/IROA_IS_NEG_2.mzXML,../IROAsamples/IROA_IS_NEG_3.mzXML"
 # mzXMLs = unlist(strsplit(mzXMLs, ","))
 # outDirectory = "../IROAsamples/MS2"
@@ -141,7 +144,7 @@ cat("  ================================================================\n\n", fi
 
 ## Parameters
 ppiThreshold = "max" ## Hard-coded
-pctTfThreshold = 50 ## Hard-coded
+pctTfThreshold = params$pctTfThreshold
 tolIsolation = params$tolIsolation
 tolPrecursor = params$tolPrecursor
 tolIntraMs2Consolidation = params$tolIntraMs2Consolidation
