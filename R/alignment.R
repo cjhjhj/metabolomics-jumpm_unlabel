@@ -90,10 +90,9 @@ files = unlist(strsplit(filenames, ","))
 
 # ## For testing in a desktop
 # startTime = Sys.time()
-# paramFile = "../IROAsamples/jumpm_negative.params"
+# paramFile = "/Research/Projects/7Metabolomics/htan_IROA/2019/c18/test/jumpm_positive.params"
 # # filenames = "../IROAsamples/IROA_c18_target1.1.feature"
-# filenames = "../IROAsamples/IROA_IS_NEG_1.1.feature,../IROAsamples/IROA_IS_NEG_2.1.feature,../IROAsamples/IROA_IS_NEG_3.1.feature"
-# # filenames = "../IROAsamples/old/IROA_IS_NEG_1.1.feature,../IROAsamples/old/IROA_IS_NEG_2.1.feature,../IROAsamples/old/IROA_IS_NEG_3.1.feature"
+# filenames = "/Research/Projects/7Metabolomics/htan_IROA/2019/c18/test/IROA_c18_target1/IROA_c18_target1.1.feature,/Research/Projects/7Metabolomics/htan_IROA/2019/c18/test/IROA_c18_target2/IROA_c18_target2.1.feature"
 # srcDirectory = "U:/Research/Projects/7Metabolomics/JUMPm"
 # outDirectory = "."
 # logFile = "tmplog"

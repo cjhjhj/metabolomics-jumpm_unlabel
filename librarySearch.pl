@@ -151,6 +151,38 @@ for (my $i = 0; $i < scalar(@libInfo); $i++) {
 	my $refRt = $libInfo[$i]{"$columnInfo" . "_rt"} * 60;	## Convert minute to second
 	my $refZ = $libInfo[$i]{"$columnInfo" . "_charge"};
 	my ($compRt, $compInd);	
+
+	## Previously, when multiple features correspond to a library compound, one with the largest intensity was chosen
+	## In the revision, one with the closest m/z to the library compound is chosen
+	my $minRtDiff = 600;	## Initial threshold of RT-difference = 10 min (= 600 sec)
+	for (my $j = 1; $j < scalar(@featInfo); $j++) {
+		my $compMz = $featInfo[$j]{'meanMz'};
+		my $compRt = $featInfo[$j]{'meanRt'};
+		my $compZ = $featInfo[$j]{'charge'};
+		next if (!defined($compZ));
+		my $compInt = $featInfo[$j]{'meanIntensity'};
+		my $mzDiff = abs($refMz - $compMz) / $refMz * 1e6;
+		my $rtDiff = abs($refRt - $compRt);
+		
+		if ($mzDiff < $matchMzTol && $rtDiff < $minRtDiff) {
+			if ($refZ == 0) {
+				$compInd = $j;
+				$minRtDiff = $rtDiff;
+			} else {
+				if ($compZ == 0 || $compZ == $refZ) {
+					$compInd = $j;
+					$minRtDiff = $rtDiff;
+				}
+			}
+		}
+	}
+	
+	if (defined($compInd)) {
+		print REF "$refRt\t$i\n";
+		print COMP "$featInfo[$compInd]{'meanRt'}\t$compInd\n";
+	}
+
+=head
 	my $compMaxInt = 0;
 	for (my $j = 1; $j < scalar(@featInfo); $j++) {		
 		my $compMz = $featInfo[$j]{'meanMz'};
@@ -171,11 +203,15 @@ for (my $i = 0; $i < scalar(@libInfo); $i++) {
 			}
 		}
 	}
+
 	if (defined ($compRt)) {
 		print REF "$refRt\t$i\n";
 		print COMP "$compRt\t$compInd\n";
 	}
+=cut
+
 }
+
 close (REF);
 close (COMP);
 open (COMP_NEW, ">", "compRt_new.txt");
@@ -211,7 +247,7 @@ my $minP = 1;	## To prevent a p-value of zero, the overall minimum p-value (no m
 open (ERR, ">", "measured_rt_error.txt");
 for (my $i = 1; $i < scalar(@featInfo); $i++) {
 	## Compare each feature's m/z and RT with every library metabolite
-	for (my $j = 0; $j < scalar(@libInfo); $j++) {		
+	for (my $j = 0; $j < scalar(@libInfo); $j++) {
 		## 1. Charge states should be identical(?)
 		my $libZ = $libInfo[$j]{"$columnInfo" . "_charge"};
 		my $featZ = $featInfo[$i]{'charge'};

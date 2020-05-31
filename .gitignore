@@ -40,3 +40,10 @@ R/IROA_IS_NEG_fully_aligned.feature
 R/IROA_IS_NEG_partially_aligned.feature
 jumpm_library_positive.params
 featureDetectionTest.pl
+rtForAlignment.txt
+R/.test_fully_aligned.feature
+R/featureToMs2Test.R
+R/simpleAlignmentTest.R
+R/test_IROA_c18_target1_unaligned.feature
+R/test_IROA_c18_target2_unaligned.feature
+R/test_partially_aligned.feature

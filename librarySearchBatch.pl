@@ -13,7 +13,7 @@ use Statistics::Lite qw(mean median);
 ## Parameter loading and initialization ##
 ##########################################
 #my $paramFile = @ARGV;
-my $paramFile = "../IROA_HILIC_NEG_Target/jumpm_negative.params";
+my $paramFile = "/Research/Projects/7Metabolomics/htan_IROA/2019/c18/test/jumpm_positive.params";
 my %params = getParams($paramFile);
 my $H = 1.007276466812;
 my $matchMzTol = 10;  ## Unit of ppm
@@ -80,11 +80,6 @@ my $matchRtTol = 10;  ## Unit of second
 ## Column names are determined based on 
 ## type of LC column (C4, C8, C18 or HILIC) and mode (pos or neg),
 print "Loading a library\n";
-
-
-$params{'LC_column'} = "hilic";
-
-
 my $columnInfo = lc($params{'LC_column'});
 if ($params{'mode'} == -1) {
 	$columnInfo .= "n";
@@ -92,8 +87,8 @@ if ($params{'mode'} == -1) {
 	$columnInfo .= "p";
 }
 my @libInfo;
-my $libFile = "./IROAlibrary/Metabolome_library_v0.1.4.txt";
-my $libMS2Path = "./IROAlibrary/MS2/";
+my $libFile = "/Research/Projects/7Metabolomics/library/Metabolome_library_v3.1.1.txt";
+my $libMS2Path = "/Research/Projects/7Metabolomics/library/c18p/";
 open (LIB, "<", $libFile) or die "Cannot open $libFile\n";
 my $header = <LIB>;
 my @headerElems = split(/\t/, $header);
@@ -105,6 +100,8 @@ while (<LIB>) {
 
 	## Open .MS2 file and calculate m/z of the library feature
 	my $ms2File = $libMS2Path . basename($libInfo[$i]{"$columnInfo" . "_linkms2"});
+	next if (!defined($ms2File));	## Skip, if MS2 file for a library entry is not prepared
+	next if (basename($ms2File) eq "na");
 	open (MS2, "<", $ms2File) or die "Cannot open $ms2File\n";
 	my $header = <MS2>;
 	while (<MS2>) {
@@ -130,7 +127,6 @@ while (<LIB>) {
 	}
 	$libInfo[$i]{"$columnInfo" . "_mz"} = $mz;
 	$i++;
-	print "#$i\tmz = $mz\tcharge = $charge\n";
 }
 close (LIB);
 print "\n";
@@ -141,8 +137,10 @@ print "\n";
 ## Note that the header of .MS2 file contains (M+H)+ or (M-H)-, and charge state
 print "\nLoading feature information\n";
 my @featInfo;
-my $featFile = "/Research/Projects/7Metabolomics/IROA_HILIC_NEG_Target/test_fully_aligned.feature"; 
-my $ms2Path = "/Research/Projects/7Metabolomics/IROA_HILIC_NEG_Target/MS2/";
+#my $featFile = "/Research/Projects/7Metabolomics/IROA_HILIC_NEG_Target/test_fully_aligned.feature"; 
+#my $ms2Path = "/Research/Projects/7Metabolomics/IROA_HILIC_NEG_Target/MS2/";
+my $featFile = "/Research/Projects/7Metabolomics/htan_IROA/2019/c18/test/align_test_htan/.test_fully_aligned.feature";
+my $ms2Path = "/Research/Projects/7Metabolomics/htan_IROA/2019/c18/test/align_test_htan/align_test.1/";
 open (FEATURE, "<", $featFile) or die "Cannot open $featFile\n";
 $header = <FEATURE>;
 @headerElems = split(/\t/, $header);
@@ -197,13 +195,22 @@ close (FEATURE);
 ##################
 ## Create temporary files; one for RT of library metabolites and the other for RT of features
 ## Just based on m/z similarity, select putative matched features and then perform RT alignment
+open (ALL, ">", "rtForAlignment.txt");
 open (REF, ">", "refRt.txt");
 open (COMP, ">", "compRt.txt");
 for (my $i = 0; $i < scalar(@libInfo); $i++) {
 	my $refMz = $libInfo[$i]{"$columnInfo" . "_mz"};
 	my $refRt = $libInfo[$i]{"$columnInfo" . "_rt"} * 60;	## Convert minute to second
 	my $refZ = $libInfo[$i]{"$columnInfo" . "_charge"};
-	my ($compRt, $compInd);	
+	my ($compRt, $compInd);
+	
+	
+	if ($refMz == 0 || !defined($refMz)) {
+		next;
+	}
+	
+	
+		
 	my $compMaxInt = 0;
 	for (my $j = 1; $j < scalar(@featInfo); $j++) {		
 		my $compMz = $featInfo[$j]{'meanMz'};
@@ -229,10 +236,12 @@ for (my $i = 0; $i < scalar(@libInfo); $i++) {
 	if (defined ($compRt)) {
 		print REF "$refRt\t$i\n";
 		print COMP "$compRt\t$compInd\n";
+		print ALL "$libInfo[$i]{'idstjude'}\t$refMz\t$refRt\t$compInd\t$featInfo[$compInd]{'meanMz'}\t$compRt\n";
 	}
 }
 close (REF);
 close (COMP);
+close (ALL);
 open (COMP_NEW, ">", "compRt_new.txt");
 for (my $i = 1; $i < scalar(@featInfo); $i++) {		
 	my $compRt = $featInfo[$i]{'meanRt'};
