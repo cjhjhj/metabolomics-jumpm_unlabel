@@ -267,9 +267,11 @@ for (my $i = 1; $i < scalar(@featInfo); $i++) {
 			## If the peak has already a "well"-matched library entry, then skip
 			next if (defined ($res{$i}{$j}{'sim'}) && $res{$i}{$j}{'sim'} >= $sim);
 			$res{$i}{$j}{'sim'} = $sim;
-			$res{$i}{$j}{'simP'} = 1 - $sim;
 			if ((1 - $sim) > 0) {
 				$minP = min(1 - $sim, $minP);
+				$res{$i}{$j}{'simP'} = 1 - $sim;
+			} else {
+				$res{$i}{$j}{'simP'} = $minP;
 			}
 			$res{$i}{$j}{'rtErr'} = $rtDiff;
 			print ERR "$i\t$j\t$rtDiff\n";
