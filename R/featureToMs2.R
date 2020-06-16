@@ -32,6 +32,8 @@ parseParams = function (paramFile) {
             params$tolIntraMs2Consolidation = as.numeric(val)
         } else if (key == "tol_inter_ms2_consolidation") {
             params$tolInterMs2Consolidation = as.numeric(val)
+        } else if (key == "ppi_threshold_of_features") {
+            params$ppiThreshold = as.numeric(val)
         } else if (key == "mode") {
             params$mode = as.numeric(val)
         }
@@ -143,7 +145,8 @@ cat("\n  Identification and consolidation of MS2 spectra for the features\n", fi
 cat("  ================================================================\n\n", file = LOG)
 
 ## Parameters
-ppiThreshold = "max" ## Hard-coded
+# ppiThreshold = "max" ## Hard-coded
+ppiThreshold = params$ppiThreshold
 pctTfThreshold = params$pctTfThreshold
 tolIsolation = params$tolIsolation
 tolPrecursor = params$tolPrecursor
