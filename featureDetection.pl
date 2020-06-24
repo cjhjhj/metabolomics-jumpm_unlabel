@@ -964,6 +964,33 @@ sub findCharge {
 	return \%chargeHash;
 }
 
+sub findRtOverlap {
+	my ($min1, $max1, $min2, $max2) = @_;
+	my $overlap = 0;
+	if ($min1 < $min2) {
+		# Examples
+		# |---------------|             range of input1
+		#       |----|                  range of input2
+		#     |----------------|        range of input2
+		if ($max1 < $max2) {
+			$overlap = $max1 - $min2;
+		} else {
+			$overlap = $max2 - $min2;
+		}
+	} else {
+		# Examples
+		#       |---------------|       range of input1
+		#  |------------|               range of input2
+		#  |------------------------|   range of input2
+		if ($max1 < $max2) {
+			$overlap = $max1 - $min1;
+		} else {
+			$overlap = $max2 - $min1;
+		}
+	}
+	return ($overlap);
+}
+
 sub median {
         my (@data) = @_;
         return unless @data;
