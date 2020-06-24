@@ -69,7 +69,7 @@ for (my $i = 0; $i < $msCount; $i++) {
 	my $maxInd = min($msCount - 1, $i + $gap + 1);
 	if ($i == 0) {
 		for (my $j = 0; $j <= $maxInd; $j++) {
-			my ($msCentroidList,$intensityThreshold) = detectPeaks($nCentroidPoints, $ms{$j}, $isCentroided);
+			my $msCentroidList = detectPeaks($nCentroidPoints, $ms{$j}, $isCentroided, $minPeakIntensity);
 			$$msCentroidList{'scanNumber'} = $ms{$j}{'scanNumber'};
 			$$msCentroidList{'scanIndex'} = $j;
 			$$msCentroidList{'RT'} = $ms{$j}{'RT'};
@@ -80,7 +80,7 @@ for (my $i = 0; $i < $msCount; $i++) {
 			shift @cache;
 		}
 		for (my $j = $oldMaxInd + 1; $j <= $maxInd; $j++) {
-			my ($msCentroidList,$intensityThreshold) = detectPeaks($nCentroidPoints, $ms{$j}, $isCentroided);
+			my $msCentroidList = detectPeaks($nCentroidPoints, $ms{$j}, $isCentroided, $minPeakIntensity);
 			$$msCentroidList{'scanNumber'} = $ms{$j}{'scanNumber'};
 			$$msCentroidList{'scanIndex'} = $j;
 			$$msCentroidList{'RT'} = $ms{$j}{'RT'};
@@ -431,7 +431,7 @@ sub getClosestValue {
 
 sub detectPeaks {
 	## Input is a single MS spectrum (mz values and corresponding intensities)
-	my ($numCentroidPoints, $msHash, $isCentroided) = @_;
+	my ($numCentroidPoints, $msHash, $isCentroided, $intensityThreshold) = @_;
 	my @peakIntensity;
 	my @peakCenterMass;
 	my @peakMinMass;
@@ -440,7 +440,7 @@ sub detectPeaks {
 	my %peakCenterMassHash;
 	my %peakCenterMassIndexHash;
 	my $peakCount = 0;
-	my $intensityThreshold = 0;
+#	my $intensityThreshold = 0;
 	my $counts = @{$$msHash{'intensity'}};
 	if ($isCentroided == 0) {	## Profile mode
 		for (my $i = 2; $i < $counts - 2; $i++) {
@@ -486,7 +486,7 @@ sub detectPeaks {
 						'peakCenterMassIndexHash' => \%peakCenterMassIndexHash, 
 						'peakIntensity' => \@peakIntensity, 
 						'peakIndex' => \@peakIndex);
-	return(\%msCentroidList, $intensityThreshold);
+	return(\%msCentroidList);
 }
 
 sub isMax {	## isMax determines whether the middle point reaches a local maximum
@@ -848,14 +848,17 @@ sub makeFeatureTable {
 	my ($mzXML, $tmpFeatureFile) = @_;		
 	open (TMP, "<", $tmpFeatureFile);
 	my %hash;
-	my %intensityHash;
+	my %featureHash;
 	<TMP>;
 	while (<TMP>) {
 		chomp $_;
 		my @data = split(/\t/, $_);
 		my ($mz, $ms1ScanNum, $intensity) = ($data[1], $data[2], $data[3]);
 		$hash{$ms1ScanNum}{$intensity}{$mz} = $_;
-		$intensityHash{$mz} = $intensity;
+		$featureHash{$mz}{'intensity'} = $intensity;
+		$featureHash{$mz}{'MS1'} = $ms1ScanNum;
+		$featureHash{$mz}{'minRT'} = $data[6];
+		$featureHash{$mz}{'maxRT'} = $data[7];
 	}
 	close(TMP);
 	
@@ -870,10 +873,10 @@ sub makeFeatureTable {
 				my $min = 0;
 				($scan - 50) < 0 ? $min = 0 : $min = ($scan - 50);				
 				for (my $i = $min; $i < ($scan + 50); $i++) {
-					my $chargeHash = findCharge($mz, \%{$hash{$i}});
+					my $chargeHash = findCharge($mz, \%{$hash{$i}}, \%featureHash);
 					foreach my $chargedMz (keys %$chargeHash) {
 						$charge{$scan}{$mz} = $$chargeHash{$chargedMz};
-						if ($intensityHash{$mz} > $intensityHash{$chargedMz}) {
+						if ($featureHash{$mz}{'intensity'} > $featureHash{$chargedMz}{'intensity'}) {
 							$isotope{$i}{$chargedMz} = $$chargeHash{$chargedMz};				
 						} else {
 							$isotope{$scan}{$mz} = $$chargeHash{$mz};
@@ -927,16 +930,26 @@ sub makeFeatureTable {
 }
 
 sub findCharge {
-	my ($selectMz, $hash) = @_;
+	my ($selectMz, $hash, $featureHash) = @_;
 	my $C = 1.00335;
 	my $intraPpm = 10;	## Decharge ppm
-	my $maxCharge = 6;
+	my $maxCharge = 4;
 	my ($lL, $uL) =  ($selectMz, $selectMz + $C + $selectMz * $intraPpm / 1e6); 
 	my %chargeHash;	
 	foreach my $intensity (sort {$b <=> $a} keys %$hash) {
 		foreach my $mz (keys %{$$hash{$intensity}}) {
 		# search the previous peak (only one peak) 
 			if ($mz > $lL && $mz < $uL) {
+				# Check RT-overlap between two features
+				my $min1 = $$featureHash{$mz}{'minRT'};
+				my $max1 = $$featureHash{$mz}{'maxRT'};
+				my $min2 = $$featureHash{$selectMz}{'minRT'};
+				my $max2 = $$featureHash{$selectMz}{'maxRT'};
+				my $minRange = min($max1 - $min1, $max2 - $min2);
+				my $rtOverlap = findRtOverlap($min1, $max1, $min2, $max2);
+				if ($rtOverlap / $minRange < 0.5) {
+					next;
+				}
 				my $diff = 1 / abs($mz - $selectMz);
 				my $roundDiff = sprintf("%.0f", $diff);
 				next if ($roundDiff == 0 || $roundDiff > $maxCharge);				
