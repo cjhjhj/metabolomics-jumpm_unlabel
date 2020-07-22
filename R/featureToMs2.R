@@ -33,6 +33,7 @@ parseParams = function (paramFile) {
         } else if (key == "tol_inter_ms2_consolidation") {
             params$tolInterMs2Consolidation = as.numeric(val)
         } else if (key == "ppi_threshold_of_features") {
+            params$ppiThreshold = val
             # params$ppiThreshold = as.numeric(val)
         } else if (key == "mode") {
             params$mode = as.numeric(val)
