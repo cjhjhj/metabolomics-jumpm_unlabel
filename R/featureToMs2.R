@@ -33,7 +33,7 @@ parseParams = function (paramFile) {
         } else if (key == "tol_inter_ms2_consolidation") {
             params$tolInterMs2Consolidation = as.numeric(val)
         } else if (key == "ppi_threshold_of_features") {
-            params$ppiThreshold = as.numeric(val)
+            # params$ppiThreshold = as.numeric(val)
         } else if (key == "mode") {
             params$mode = as.numeric(val)
         }
@@ -224,6 +224,7 @@ for (m in 1:length(mzXMLs)) {
             if (ppiThreshold == "max") {
                 ind = ind[which.max(ppi)]
             } else {
+                ppiThreshold = as.numeric(ppiThreshold)
                 ind = ind[ppi > ppiThreshold]
             }
             ## When there's no reasonable candidate feature of which PPI is greater than a threshold
