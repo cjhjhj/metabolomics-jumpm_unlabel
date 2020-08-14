@@ -135,7 +135,7 @@ if (length(files) > 1) {
                 refIntensity = tmpIntensity
             }
         }
-    } else if (params$referenceFeature = "1") {
+    } else if (params$referenceFeature == "1") {
         # A run with the most number of features is set to a reference run
         refNo = 1
         refN = 0
