@@ -158,6 +158,8 @@ localCalibration = function(ref, comp, rtSd, mzSd, params, cal) {
     if (length(mzSd) == 1) {
         mzSd = rep(mzSd, n)
     }
+    rtSd[rtSd == 0] = min(rtSd[rtSd > 0])
+    mzSd[mzSd == 0] = min(mzSd[mzSd > 0])
     sdWidth = params$sdWidth
     rtTol = sdWidth * rtSd
     mzTol = sdWidth * mzSd

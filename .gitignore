@@ -48,3 +48,7 @@ R/test_IROA_c18_target1_unaligned.feature
 R/test_IROA_c18_target2_unaligned.feature
 R/test_partially_aligned.feature
 findChargeTest.pl
+R/.test_all_fully_aligned.feature
+R/test_all_fully_aligned.feature
+R/test_all_IROA_c18_targe_unaligned.feature
+R/test_all_partially_aligned.feature
