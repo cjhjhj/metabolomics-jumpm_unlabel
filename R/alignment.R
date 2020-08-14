@@ -140,7 +140,7 @@ if (length(files) > 1) {
         refNo = 1
         refN = 0
         for (i in 1:length(features)) {
-            tmpN = dim(fArray[i])[1]
+            tmpN = dim(features[[i]])[1]
             if (tmpN >= refN) {
                 refNo = i
                 refN = tmpN
