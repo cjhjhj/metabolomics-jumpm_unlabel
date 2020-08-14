@@ -135,6 +135,18 @@ if (length(files) > 1) {
                 refIntensity = tmpIntensity
             }
         }
+    } else if (params$referenceFeature = "1") {
+        # A run with the most number of features is set to a reference run
+        refNo = 1
+        refN = 0
+        for (i in 1:length(features)) {
+            tmpN = dim(fArray[i])[1]
+            if (tmpN >= refN) {
+                refNo = i
+                refN = tmpN
+            }
+        }
+        
     } else {
         refNo = which(files == params$referenceFeature)
     }
